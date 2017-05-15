@@ -6,6 +6,7 @@
 #include "ofApp.h"
 #include <stdio.h>
 #include <string>
+#ifdef _WIN32
 #include <fileapi.h>
 #include <windows.h>
 #include <setupapi.h>
@@ -17,7 +18,7 @@
 #pragma comment(lib, "SetupAPI")
 #pragma comment(lib, "BluetoothApis.lib")
 #pragma comment(lib, "Kernel32.lib")
-
+#endif
 
 /* --------------------------------------------------------------
 *     MACROS
