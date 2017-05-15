@@ -10,8 +10,10 @@
 #include "threadedOscReceiver.h"
 #include "threadedOscSender.h"
 #include "threadedHidReceiver.h"
-#include "threadedBleReceiver.h"
 #include "smsData.h"
+#ifdef _WIN32
+#include "threadedBleReceiver.h"
+#endif
 
 #define OSC_PORT                    11999
 #ifndef SMS_MAX_PERIPH
@@ -105,7 +107,9 @@ class ofApp : public ofBaseApp{
 		bool hidReceiverRunning;
 		bool newBleValue;
 		// BLE
+#ifdef _WIN32
 		threadedBleReceiver * BleHidThread;
+#endif
 		bool bleHidRunning;
 		// ofxOsc
 		threadedOscReceiver * OscReceiverThread;

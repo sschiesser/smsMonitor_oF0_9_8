@@ -1,6 +1,8 @@
 #include "ofApp.h"
 #include "smsGui.h"
+#ifdef _WIN32
 #include "combaseapi.h"
+#endif
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 
@@ -20,8 +22,8 @@ void ofApp::setup() {
 	hidReceiverRunning = false;
 
 	// Setup BLE receiver
-	BleHidThread = new(threadedBleReceiver);
-	bleHidRunning = false;
+//	BleHidThread = new(threadedBleReceiver);
+//	bleHidRunning = false;
 
 	// Setup OSC receiver
 	OscReceiverThread = new(threadedOscReceiver);
@@ -97,10 +99,10 @@ bool ofApp::startBleHid()
 {
 	if (appDebug) printf("[ofApp::startHID] starting BLE HID device\n");
 
-	GUID AGuid;
-	CLSIDFromString(TEXT(TO_SEARCH_DEVICE_UUID), &AGuid);
+//	GUID AGuid;
+//	CLSIDFromString(TEXT(TO_SEARCH_DEVICE_UUID), &AGuid);
 	//BleHidThread->bleHidDevice.openDevice(AGuid);
-	BleHidThread->openDevice(AGuid);
+//	BleHidThread->openDevice(AGuid);
 	//BleHidThread->bleHidDevice.deviceOpen = true;
 
 	return true;
@@ -110,7 +112,7 @@ bool ofApp::startBleHid()
 bool ofApp::stopBleHid()
 {
 	if (appDebug) printf("[ofApp::stopHID] stopping BLE HID device\n");
-	BleHidThread->closeDevice();
+//	BleHidThread->closeDevice();
 	//BleHidThread->bleHidDevice.deviceOpen = false;
 
 	return true;
@@ -199,7 +201,7 @@ void ofApp::draw() {
 
 							stopBleHid();
 
-							BleHidThread->stop();
+//							BleHidThread->stop();
 							bleHidRunning = false;
 						}
 					}
@@ -209,7 +211,7 @@ void ofApp::draw() {
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
 						if (ImGui::Button("Start")) {
 							wordClockBase = ofGetSystemTime();
-							BleHidThread->start();
+//							BleHidThread->start();
 							bleHidRunning = true;
 
 							startBleHid();
