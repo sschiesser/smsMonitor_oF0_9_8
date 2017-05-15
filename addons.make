@@ -1,3 +1,4 @@
+ofxBLE
 ofxImGui
 ofxOsc
 ofxXmlSettings

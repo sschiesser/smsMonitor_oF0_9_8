@@ -88,7 +88,7 @@ bool rawHid::openDevice()
 			//return -1;
 		}
 		else {
-			if (appDebug) printf("[ofxRawHID::openDevice] found HID device: 0x%04X : 0x%04X... handle is 0x%x\n", vendorID, productID, (unsigned int)&selectedDeviceInfo.handle);
+			if (appDebug) printf("[ofxRawHID::openDevice] found HID device: 0x%04X : 0x%04X... handle is 0x%x\n", vendorID, productID, &selectedDeviceInfo.handle);
 			deviceOpen = true;
 
 			/* Read the Manufacturer String */
@@ -138,7 +138,7 @@ bool rawHid::openDevice()
 bool rawHid::closeDevice()
 {
 	if (deviceOpen) {
-		if (appDebug) printf("[ofxRawHID::closeDevice] Closing device & deleting handle (0x%x)\n", (unsigned int)&selectedDeviceInfo.handle);
+		if (appDebug) printf("[ofxRawHID::closeDevice] Closing device & deleting handle (0x%x)\n", &selectedDeviceInfo.handle);
 		hid_close(selectedDeviceInfo.handle);
 		selectedDeviceInfo.handle = NULL;
 		deviceOpen = false;
