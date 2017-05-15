@@ -23,11 +23,11 @@
 //#define NUM_MSG_STRINGS 20
 
 /* DEFAULT SABRE RECEIVER HID VALUES
-* =================================
-* Change either here (static) or in the XML conf file (dynamic)
-* Note: the constant values are 8-bit encoded. Conversion is
-*       needed to fit with some wchar_t variables.
-*/
+ * =================================
+ * Change either here (static) or in the XML conf file (dynamic)
+ * Note: the constant values are 8-bit encoded. Conversion is
+ *       needed to fit with some wchar_t variables.
+ */
 #define SABRE_VENDORID "1C57"
 #define SABRE_PRODUCTID "5ABE"
 #define SABRE_MANUFACTURERSTRING "ICST"
@@ -37,7 +37,7 @@
 /* ================================= */
 
 /* MODIFY AT EACH VERSION CHANGE!!
-* ================================= */
+ * ================================= */
 #define SERVER_VERSION "0.99"
 /* ================================= */
 
@@ -68,81 +68,87 @@ struct dataRefresh {
 };
 
 class ofApp : public ofBaseApp{
-
-	public:
-		void setup();
-		void update();
-		void draw();
-
-		void getBLEDeviceList();
-
-		bool startBleHid();
-		bool stopBleHid();
-
-		bool startOscSender();
-		bool stopOscSender();
-
-		void keyPressed(int key);
-		void keyReleased(int key);
-		void mouseScrolled(float x, float y);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
-		void mousePressed(int x, int y, int button);
-		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
-
-		void remapData(int p);
-		void calcDelta(int p);
-		void calcJoystick(int p);
-		void calcAhrs(int p);
-		long getWordClock();
-
-		
-		// rawHid
-		threadedHidReceiver * RawHidThread;
-		bool hidReceiverRunning;
-		bool newBleValue;
-		// BLE
+	
+public:
+	void setup();
+	void update();
+	void draw();
+	
+	void getBLEDeviceList();
+	
+	bool startBleHid();
+	bool stopBleHid();
+	
+	bool startOscSender();
+	bool stopOscSender();
+	
+	void keyPressed(int key);
+	void keyReleased(int key);
+	void mouseScrolled(float x, float y);
+	void mouseMoved(int x, int y );
+	void mouseDragged(int x, int y, int button);
+	void mousePressed(int x, int y, int button);
+	void mouseReleased(int x, int y, int button);
+	void mouseEntered(int x, int y);
+	void mouseExited(int x, int y);
+	void windowResized(int w, int h);
+	void dragEvent(ofDragInfo dragInfo);
+	void gotMessage(ofMessage msg);
+	
+	void remapData(int p);
+	void calcDelta(int p);
+	void calcJoystick(int p);
+	void calcAhrs(int p);
+	long getWordClock();
+	
+	void didDisconnect();
+	void didConnect();
+	void didReceiveData(unsigned char *data, int length);
+	void didUpdateRSSI(int rssi);
+	void didRecieveData(unsigned char *data, int length);
+	
+	
+	// rawHid
+	threadedHidReceiver * RawHidThread;
+	bool hidReceiverRunning;
+	bool newBleValue;
+	// BLE
 #ifdef _WIN32
-		threadedBleReceiver * BleHidThread;
+	threadedBleReceiver * BleHidThread;
 #endif
-		bool bleHidRunning;
-		// ofxOsc
-		threadedOscReceiver * OscReceiverThread;
-		bool oscReceiverRunning;
-		threadedOscSender * OscSenderThread;
-		bool oscSenderRunning;
-
-		ofTrueTypeFont font;
-
-		long wordClockBase;
-
-		// ofxImGui
-		ofxImGui::Gui gui;
-		ImVec4 backgroundColor;
-		ImFont *fontClock;
-		ImFont *fontDisplay;
-		ImFont *fontScale;
-		unsigned char* fontPx;
-		int fontW, fontH;
-
-		bool show_test_window;
-		bool show_another_window;
-
-		float floatValue;
-		ofImage imageButtonSource;
-		GLuint imageButtonID;
-
-		ofPixels pixelsButtonSource;
-		GLuint pixelsButtonID;
-
-		ofTexture textureSource;
-		GLuint textureSourceID;
-
-		struct guiModules activeMods;
-		struct dataRefresh redraw[SMS_MAX_PERIPH];
+	bool bleHidRunning;
+	// ofxOsc
+	threadedOscReceiver * OscReceiverThread;
+	bool oscReceiverRunning;
+	threadedOscSender * OscSenderThread;
+	bool oscSenderRunning;
+	
+	ofTrueTypeFont font;
+	
+	long wordClockBase;
+	
+	// ofxImGui
+	ofxImGui::Gui gui;
+	ImVec4 backgroundColor;
+	ImFont *fontClock;
+	ImFont *fontDisplay;
+	ImFont *fontScale;
+	unsigned char* fontPx;
+	int fontW, fontH;
+	
+	bool show_test_window;
+	bool show_another_window;
+	
+	float floatValue;
+	ofImage imageButtonSource;
+	GLuint imageButtonID;
+	
+	ofPixels pixelsButtonSource;
+	GLuint pixelsButtonID;
+	
+	ofTexture textureSource;
+	GLuint textureSourceID;
+	
+	struct guiModules activeMods;
+	struct dataRefresh redraw[SMS_MAX_PERIPH];
 };

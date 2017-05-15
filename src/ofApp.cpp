@@ -985,6 +985,31 @@ void ofApp::calcAhrs(int p)
 }
 
 //--------------------------------------------------------------
+void ofApp::didDisconnect() {
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::didConnect() {
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::didReceiveData(unsigned char *data, int length) {
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::didUpdateRSSI(int rssi) {
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::didRecieveData(unsigned char *data, int length) {
+    
+}
+
+//--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
 
 	ofLogVerbose(__FUNCTION__) << key;
