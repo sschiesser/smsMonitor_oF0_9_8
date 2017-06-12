@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef _WIN32
 #define POCO_NO_UNWINDOWS
+#endif
 
 #include "ofMain.h"
 #include "ofxOsc.h"
@@ -11,9 +13,14 @@
 #include "threadedOscSender.h"
 #include "threadedHidReceiver.h"
 #include "smsData.h"
+
+#include "ofxBLE.h"
+
 #ifdef _WIN32
 #include "threadedBleReceiver.h"
 #endif
+
+
 
 #define OSC_PORT                    11999
 #ifndef SMS_MAX_PERIPH
@@ -101,13 +108,13 @@ public:
 	void calcAhrs(int p);
 	long getWordClock();
 	
-	void didDisconnect();
-	void didConnect();
-	void didReceiveData(unsigned char *data, int length);
-	void didUpdateRSSI(int rssi);
-	void didRecieveData(unsigned char *data, int length);
+	void BLEdidDisconnect();
+	void BLEdidConnect();
+	void BLEdidRecieveData(unsigned char *data, int length);
+	void BLEdidUpdateRSSI(int rssi);
 	
-	
+//    ofxBLE * MEINofxBLE;
+
 	// rawHid
 	threadedHidReceiver * RawHidThread;
 	bool hidReceiverRunning;
@@ -116,6 +123,9 @@ public:
 #ifdef _WIN32
 	threadedBleReceiver * BleHidThread;
 #endif
+    //Conecting
+    bool BLEConnectButton = false;
+    
 	bool bleHidRunning;
 	// ofxOsc
 	threadedOscReceiver * OscReceiverThread;
@@ -151,4 +161,5 @@ public:
 	
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
+    
 };
