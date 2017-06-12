@@ -1,10 +1,15 @@
 #include "ofApp.h"
 #include "smsGui.h"
+
+#include "ofxBLE.h"
+
 #ifdef _WIN32
 #include "combaseapi.h"
 #endif
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
+ofxBLE * MEINofxBLE;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -16,7 +21,10 @@ void ofApp::setup() {
 		printf("*************************************\n\r");
 	}
 	ofSetLogLevel(OF_LOG_VERBOSE);
+    
 
+    
+    
 	// Setup rawHID receiver
 	RawHidThread = new(threadedHidReceiver);
 	hidReceiverRunning = false;
@@ -83,11 +91,17 @@ void ofApp::setup() {
 	//CLSIDFromString(TEXT(TO_SEARCH_DEVICE_UUID), &AGuid);
 	//BleHidThread->start();
 	//BleHidThread->bleHidDevice.openDevice(AGuid);
+    
+
+    //starting Bluetooth
+    MEINofxBLE = new(ofxBLE);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::getBLEDeviceList()
 {
+
 	if (appDebug) {
 		printf("[ofApp::getBLEDeviceList] Listing bonded BLE devices...\n");
 	}
@@ -223,6 +237,75 @@ void ofApp::draw() {
 					ImGui::PopStyleColor(3);
 					ImGui::PopFont();
 				}
+                
+                //Connect Button
+                {
+                    
+                    
+                    if (MEINofxBLE->isConnected() == false)
+                    {
+                        ImGui::SameLine(ImGui::GetWindowWidth()-100);
+                        ImGui::PushFont(fontClock);
+                        
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
+                        if (ImGui::Button("Connect")) {
+                            
+                            //=================*DeviceList*=========================
+                            NSLog(@"look for Devices!");
+                        
+                            //    ofxBLE * MEINofxBLE;
+                            BLEConnectButton = true;
+                        
+                            MEINofxBLE->ofxBLE::scanPeripherals();
+                            
+                        }
+                    }/*
+                    else if (BLEConnectButton == true && MEINofxBLE->isConnected() == false){
+                        
+                        //NSLog(@"connecting button on");
+                        
+                        ImGui::SameLine(ImGui::GetWindowWidth()-120);
+                        ImGui::PushFont(fontClock);
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
+                        if (ImGui::Button("connecting")) {
+                        }
+                        
+                    }*/
+                    else if (MEINofxBLE->isConnected() == true ){
+                        BLEConnectButton = false;
+                        ImGui::SameLine(ImGui::GetWindowWidth()-120);
+                        ImGui::PushFont(fontClock);
+                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
+                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
+                        if (ImGui::Button("Disconnect")) {
+                             MEINofxBLE->ofxBLE::scanPeripherals();
+                            
+                        }
+                    }
+                    
+                    ImGui::PopStyleColor(3);
+                    ImGui::PopFont();
+                    
+                }
+                
+                //connecting information
+                
+                {
+                    if(BLEConnectButton)
+                    {
+                        ImGui::SameLine(ImGui::GetWindowWidth()-300);
+                        ImGui::PushFont(fontClock);
+                        ImGui::Text("connecting...");
+                        ImGui::PopFont();
+                    }
+                }
+                
+                
 				// Timecode
 				{
 					ImGui::SameLine(360);
@@ -279,7 +362,13 @@ void ofApp::draw() {
 					{
 						ImGui::Text("Link:");
 						ImGui::SameLine();
-						float link = (rand() % 100) / 100.;
+                        float link = 0;
+                        if (MEINofxBLE->isConnected()){
+                            // link = MEINofxBLE->displayRSSI();
+                            link = (link + 100.0) / 100.0;
+                        }
+
+                        
 						char buf[32];
 						sprintf(buf, "%d/%d", (int)((link + 0.09) * 10), 10);
 						ImGui::PushItemWidth(112);
@@ -291,8 +380,8 @@ void ofApp::draw() {
 						ImGui::SameLine(172);
 						ImGui::Text("Battery:");
 						ImGui::SameLine();
-						float battery = (rand() % 100) / 100.;
-
+						//float battery = (rand() % 100) / 100.;
+                        float battery = 0;
 						ImGui::PushItemWidth(112);
 						ImGui::ProgressBar(battery, ImVec2(0.0f, 0.0f));
 						ImGui::PopItemWidth();
@@ -985,29 +1074,25 @@ void ofApp::calcAhrs(int p)
 }
 
 //--------------------------------------------------------------
-void ofApp::didDisconnect() {
+void ofApp::BLEdidDisconnect() {
     
 }
 
 //--------------------------------------------------------------
-void ofApp::didConnect() {
+void ofApp::BLEdidConnect() {
     
 }
 
 //--------------------------------------------------------------
-void ofApp::didReceiveData(unsigned char *data, int length) {
+void ofApp::BLEdidRecieveData(unsigned char *data, int length) {
     
 }
 
 //--------------------------------------------------------------
-void ofApp::didUpdateRSSI(int rssi) {
+void ofApp::BLEdidUpdateRSSI(int rssi) {
     
 }
 
-//--------------------------------------------------------------
-void ofApp::didRecieveData(unsigned char *data, int length) {
-    
-}
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
