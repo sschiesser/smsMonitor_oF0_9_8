@@ -384,14 +384,15 @@ void ofApp::draw() {
                         float link = 0;
                         if (MEINofxBLE->isConnected()){
                              link = MEINofxBLE->displayRSSI();
-                            link = (link + 100.0) / 100.0;
+                            //NSLog(@"RSSI: %f", link);
+                            link = (link + 140.0) / 10.0;
                         }
-
-                        
+                        if (link > 10) link = 10;
+                        //NSLog(@"RSSI: %f", link);
 						char buf[32];
-						sprintf(buf, "%d/%d", (int)((link + 0.09) * 10), 10);
+						sprintf(buf, "%d/%d", (int)(link), 10);
 						ImGui::PushItemWidth(112);
-						ImGui::ProgressBar(link, ImVec2(0.f, 0.f), buf);
+						ImGui::ProgressBar((link/10.0), ImVec2(0.f, 0.f), buf);
 						ImGui::PopItemWidth();
 					}
 					// Battery level display
