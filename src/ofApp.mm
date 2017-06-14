@@ -177,12 +177,15 @@ void ofApp::update() {
 
         NSLog(@"got button data flag in ofApp");
 
+        NSLog(@"Button1 in ofApp: %d", MEINofxBLE->Button1Data());
+        NSLog(@"Button2 in ofApp: %d", MEINofxBLE->Button2Data());
+
+       
         
-       /*
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = MEINofxBLE->Button1Data();
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = MEINofxBLE->Button2Data();
+
         
-        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = MEINofxBLE->ButtonData();
-        
-        NSLog(@"Button Data in ofApp: %@",MEINofxBLE->ButtonData());*/
         MEINofxBLE->sethaveButtonDatafalse();
     }
 }
