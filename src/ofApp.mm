@@ -364,7 +364,7 @@ void ofApp::draw() {
 						ImGui::SameLine();
                         float link = 0;
                         if (MEINofxBLE->isConnected()){
-                            // link = MEINofxBLE->displayRSSI();
+                             link = MEINofxBLE->displayRSSI();
                             link = (link + 100.0) / 100.0;
                         }
 
