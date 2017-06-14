@@ -169,6 +169,22 @@ void ofApp::update() {
 		remapData(OscReceiverThread->haveInput);
 		OscReceiverThread->haveInput = -1;
 	}
+
+    if (MEINofxBLE->haveButtonData())
+        
+    {
+        NSLog(@"haveButtonData in ofApp: %d",MEINofxBLE->haveButtonData());
+
+        NSLog(@"got button data flag in ofApp");
+
+        
+       /*
+        
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = MEINofxBLE->ButtonData();
+        
+        NSLog(@"Button Data in ofApp: %@",MEINofxBLE->ButtonData());*/
+        MEINofxBLE->sethaveButtonDatafalse();
+    }
 }
 
 bool doThemeColorsWindow = false;
