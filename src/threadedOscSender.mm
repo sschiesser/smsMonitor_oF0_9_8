@@ -57,6 +57,7 @@ void threadedOscSender::threadedFunction()
     while(isThreadRunning()) {
         long curTime = ofGetElapsedTimeMillis();
         for(int i = 0; i < SMS_MAX_PERIPH; i++) {
+            
         }
     }
 }

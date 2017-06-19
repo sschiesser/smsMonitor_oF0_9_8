@@ -111,6 +111,10 @@ struct bleMpuData
 #define SMSDATA_AHRS_ROLL_POS           0
 #define SMSDATA_AHRS_PITCH_POS          1
 #define SMSDATA_AHRS_YAW_POS            2
+#define SMSDATA_AHRS_Q1_POS             0
+#define SMSDATA_AHRS_Q2_POS             1
+#define SMSDATA_AHRS_Q3_POS             2
+#define SMSDATA_AHRS_Q4_POS             3
 
 struct smsData
 {
@@ -129,4 +133,5 @@ struct smsData
 	long wordClock;
 	double joystick[2];
 	double ahrs[3];
+    double quat[4];
 };

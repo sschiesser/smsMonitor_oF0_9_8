@@ -184,11 +184,19 @@ void ofApp::update() {
         
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = MEINofxBLE->Button1Data();
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = MEINofxBLE->Button2Data();
-
-        
         MEINofxBLE->sethaveButtonDatafalse();
     }
-}
+    
+    if (MEINofxBLE->haveahrsData())
+        
+    {
+        for (int i = 0 ; i < 4; i++){
+        OscSenderThread->sendData[0].quat[i] = MEINofxBLE->ahrsData();
+        }
+               MEINofxBLE->sethaveahrsDatafalse();
+    }
+
+    }
 
 bool doThemeColorsWindow = false;
 //--------------------------------------------------------------
@@ -587,13 +595,69 @@ void ofApp::draw() {
 				// Heading/tilt header
 				{
 					if (ImGui::CollapsingHeader("Heading/tilt")) {
-
+                       
 					}
 				}
 
 				// AHRS header
 				{
 					if (ImGui::CollapsingHeader("AHRS")) {
+                        
+                        static float ahrs[4];
+                        static ImVector<float> ahrsPlot[4];
+                        static int ahrsPlotOffset[4] = { 0, 0, 0, 0 };
+                        // Fill the 4 accelerometer values
+                        for (int i = 0; i < 4; i++) {
+                            if (ahrsPlot[i].empty()) {
+                                ahrsPlot[i].resize(50);
+                                memset(ahrsPlot[i].Data, 0, ahrsPlot[i].Size * sizeof(float));
+                            }
+                            ahrs[i] = OscSenderThread->sendData[mod].quat[i];
+                            ahrsPlot[i][ahrsPlotOffset[i]] = ahrs[i];
+                            ahrsPlotOffset[i] = (ahrsPlotOffset[i] + 1) % ahrsPlot[i].Size;
+                        }
+                        // X
+                        {
+                            ImGui::Text("Q1"); ImGui::SameLine(40);
+                            ImGui::PushItemWidth(140);
+                            string id = "##Q1" + ofToString(mod);
+                            ImGui::SliderFloat(id.c_str(), &ahrs[0], 0.0f, 1.0f); ImGui::SameLine();
+                            string idPlot = "##ahrsQ1Plot" + ofToString(mod);
+                            ImGui::PlotLines(idPlot.c_str(), ahrsPlot[0].Data, ahrsPlot[0].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                            ImGui::PopItemWidth();
+                        }
+                        // Y
+                        {
+                            ImGui::Text("Q2"); ImGui::SameLine(40);
+                            ImGui::PushItemWidth(140);
+                            string id = "##Q2" + ofToString(mod);
+                            ImGui::SliderFloat(id.c_str(), &ahrs[1], 0.0f, 1.0f); ImGui::SameLine();
+                            string idPlot = "##ahrsQ2Plot" + ofToString(mod);
+                            ImGui::PlotLines(idPlot.c_str(), ahrsPlot[1].Data, ahrsPlot[1].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                            ImGui::PopItemWidth();
+                        }
+                        // Z
+                        {
+                            ImGui::Text("Q3"); ImGui::SameLine(40);
+                            ImGui::PushItemWidth(140);
+                            string id = "##Q3" + ofToString(mod);
+                            ImGui::SliderFloat(id.c_str(), &ahrs[2], 0.0f, 1.0f); ImGui::SameLine();
+                            string idPlot = "##ahrsQ3Plot" + ofToString(mod);
+                            ImGui::PlotLines(idPlot.c_str(), ahrsPlot[2].Data, ahrsPlot[2].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                            ImGui::PopItemWidth();
+                        }
+                        // Sum
+                        {
+                            ImGui::Text("Q4"); ImGui::SameLine(40);
+                            ImGui::PushItemWidth(140);
+                            string id = "##Q4" + ofToString(mod);
+                            ImGui::SliderFloat(id.c_str(), &ahrs[3], 0.0f, 1.0f); ImGui::SameLine();
+                            string idPlot = "##ahrsQ4Plot" + ofToString(mod);
+                            ImGui::PlotLines(idPlot.c_str(), ahrsPlot[3].Data, ahrsPlot[3].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                            ImGui::PopItemWidth();
+                        }
+                        
+
 					}
 				}
 
