@@ -186,14 +186,25 @@ void ofApp::update() {
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = MEINofxBLE->Button2Data();
         MEINofxBLE->sethaveButtonDatafalse();
     }
-    
+    if (MEINofxBLE->haveAirmemsData())
+    {
+        OscSenderThread->sendData[0].pressure = MEINofxBLE->PressureData();
+        OscSenderThread->sendData[0].temperature[0] = MEINofxBLE->TemperatureData();
+      //  NSLog(@"Temp in ofApp: %f", MEINofxBLE->TemperatureData());
+        MEINofxBLE->sethaveAirmemsDatafalse();
+    }
     if (MEINofxBLE->haveahrsData())
         
     {
         for (int i = 0 ; i < 4; i++){
-        OscSenderThread->sendData[0].quat[i] = MEINofxBLE->ahrsData();
+        OscSenderThread->sendData[0].quat[i] = MEINofxBLE->ahrsData(i);
         }
-               MEINofxBLE->sethaveahrsDatafalse();
+        MEINofxBLE->sethaveahrsDatafalse();
+      /*  NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
+        NSLog(@"Quat2 in ofApp %f", OscSenderThread->sendData[0].quat[1]);
+        NSLog(@"Quat3 in ofApp %f", OscSenderThread->sendData[0].quat[2]);
+        NSLog(@"Quat4 in ofApp %f", OscSenderThread->sendData[0].quat[3]);
+      */  
     }
 
     }
@@ -473,7 +484,7 @@ void ofApp::draw() {
 						}
 					}
 				}
-
+/*
 				// Accelerometer header
 				{
 					if (ImGui::CollapsingHeader("Accelerometer")) {
@@ -591,7 +602,7 @@ void ofApp::draw() {
 						}
 					}
 				}
-
+*/
 				// Heading/tilt header
 				{
 					if (ImGui::CollapsingHeader("Heading/tilt")) {
@@ -616,7 +627,7 @@ void ofApp::draw() {
                             ahrsPlot[i][ahrsPlotOffset[i]] = ahrs[i];
                             ahrsPlotOffset[i] = (ahrsPlotOffset[i] + 1) % ahrsPlot[i].Size;
                         }
-                        // X
+                        // Q1
                         {
                             ImGui::Text("Q1"); ImGui::SameLine(40);
                             ImGui::PushItemWidth(140);
@@ -626,7 +637,7 @@ void ofApp::draw() {
                             ImGui::PlotLines(idPlot.c_str(), ahrsPlot[0].Data, ahrsPlot[0].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
                             ImGui::PopItemWidth();
                         }
-                        // Y
+                        // Q2
                         {
                             ImGui::Text("Q2"); ImGui::SameLine(40);
                             ImGui::PushItemWidth(140);
@@ -636,7 +647,7 @@ void ofApp::draw() {
                             ImGui::PlotLines(idPlot.c_str(), ahrsPlot[1].Data, ahrsPlot[1].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
                             ImGui::PopItemWidth();
                         }
-                        // Z
+                        // Q3
                         {
                             ImGui::Text("Q3"); ImGui::SameLine(40);
                             ImGui::PushItemWidth(140);
@@ -646,7 +657,7 @@ void ofApp::draw() {
                             ImGui::PlotLines(idPlot.c_str(), ahrsPlot[2].Data, ahrsPlot[2].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
                             ImGui::PopItemWidth();
                         }
-                        // Sum
+                        // Q4
                         {
                             ImGui::Text("Q4"); ImGui::SameLine(40);
                             ImGui::PushItemWidth(140);
@@ -686,7 +697,7 @@ void ofApp::draw() {
 							memset(pVals.Data, 0, pVals.Size * sizeof(float));
 						}
 						press = OscSenderThread->sendData[0].pressure;
-						pVals[pValsOffset] = 0.;
+						pVals[pValsOffset] = press;
 						pValsOffset = (pValsOffset + 1) % pVals.Size;
 						ImGui::BeginGroup();
 						{
@@ -697,9 +708,9 @@ void ofApp::draw() {
 							}
 							ImGui::EndGroup(); ImGui::SameLine(80);
 							string id = "##pressSlider" + ofToString(mod);
-							ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, -200.0f, 200.0f, ""); ImGui::SameLine(92);
+							ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, 500.0f, 1500.0f, ""); ImGui::SameLine(92);
 							string idPlot = "##pressPlot" + ofToString(mod);
-							ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", -200.0f, 200.0f, ImVec2(252, 80));
+							ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", 500.0f, 1500.0f, ImVec2(252, 80));
 						}
 						ImGui::EndGroup();
 					}
@@ -710,24 +721,29 @@ void ofApp::draw() {
 					if (ImGui::CollapsingHeader("Temperature")) {
 						// Temp @ pressure
 						{
+                            static float temp;
 							static ImVector<float> tpVals;
 							static int tpValsOffset = 0;
 							if (tpVals.empty()) {
 								tpVals.resize(100);
 								memset(tpVals.Data, 0, tpVals.Size * sizeof(float));
 							}
-							tpVals[tpValsOffset] = OscSenderThread->sendData[0].temperature[0];
+                            temp = OscSenderThread->sendData[0].temperature[0];
+							tpVals[tpValsOffset] = temp;
 							tpValsOffset = (tpValsOffset + 1) % tpVals.Size;
 							ImGui::BeginGroup();
 							{
 								ImGui::BeginGroup();
 								{
 									ImGui::Text("Temp #1:");
-									ImGui::Text("%.2f °C", tpVals[tpValsOffset]);
+									ImGui::Text("%.2f °C", temp);
+                                    ImGui::Text("%.2f °F", temp*1.8+32);
+
 								}
 								ImGui::EndGroup(); ImGui::SameLine(80);
+                                ImVec2(264, 80), &temp;
 								string id = "##temp_p" + ofToString(mod);
-								ImGui::PlotLines(id.c_str(), tpVals.Data, tpVals.Size, 0, "Temperature (°C)", 20.0f, 32.0f, ImVec2(264, 80));
+								ImGui::PlotLines(id.c_str(), tpVals.Data, tpVals.Size, 0, "Temperature (°C)", 18.0f, 35.0f, ImVec2(264, 80));
 							}
 							ImGui::EndGroup();
 						}
@@ -748,6 +764,8 @@ void ofApp::draw() {
 								{
 									ImGui::Text("Temp #2:");
 									ImGui::Text("%.2f °C", tmVals[tmValsOffset]);
+                                    ImGui::Text("%.2f °F", tmVals[tmValsOffset]*1.8+32);
+
 								}
 								ImGui::EndGroup(); ImGui::SameLine(80);
 								string id = "##temp_m" + ofToString(mod);
