@@ -14,6 +14,8 @@
 #define OSC_SENDER_MAX				4
 #define OSC_SENDER_DEFAULT_IP		"127.0.0.1"
 #define OSC_SENDER_DEFAULT_PORT		12999
+#define OSC_FRAMELENGTH             105
+
 
 #define OSC_SENDER_MODE_NORMAL		1
 #define OSC_SENDER_MODE_IEM			16
@@ -50,4 +52,7 @@ public:
     long oscPrevTime[SMS_MAX_PERIPH];
 
 	struct smsData sendData[SMS_MAX_PERIPH];
+    
+    
+    ofxOscMessage m[OSC_FRAMELENGTH];
 };
