@@ -57,7 +57,13 @@ void threadedOscSender::threadedFunction()
     while(isThreadRunning()) {
         long curTime = ofGetElapsedTimeMillis();
         for(int i = 0; i < SMS_MAX_PERIPH; i++) {
+            //send Button
+          /*  m[0].clear();
+            m[0].setAdress("/button1");
+             m[i].addIntArg
             
+            sender[ID].sendMessage( m[i] );
+            */
         }
     }
 }
