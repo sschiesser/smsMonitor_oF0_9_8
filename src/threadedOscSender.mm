@@ -40,8 +40,10 @@ void threadedOscSender::setup()
 //--------------------------------------------------------------
 void threadedOscSender::start()
 {
-	if (appDebug) printf("[threadedOscSender::start] starting OSC sender thread...\n");
+	//if (appDebug) printf("[threadedOscSender::start] starting OSC sender thread...\n");
 	startThread();
+    
+    NSLog(@"got it to thrededoscsender");
 }
 
 //--------------------------------------------------------------
@@ -58,12 +60,12 @@ void threadedOscSender::threadedFunction()
         long curTime = ofGetElapsedTimeMillis();
         for(int i = 0; i < SMS_MAX_PERIPH; i++) {
             //send Button
-          /*  m[0].clear();
-            m[0].setAdress("/button1");
-             m[i].addIntArg
+            m[0].clear();
+            m[0].setAddress("/button1");
+            m[0].addIntArg(sendData[0].button[SMSDATA_BUTTON_B0_POS]);
             
-            sender[ID].sendMessage( m[i] );
-            */
+            oscSender[0].sendMessage( m[0] );
+            
         }
     }
 }
