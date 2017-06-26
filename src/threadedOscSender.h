@@ -55,4 +55,21 @@ public:
     
     
     ofxOscMessage m[OSC_FRAMELENGTH];
+    
+    bool newButtonData;
+    bool newAirpressureData;
+    bool newIMUData;
+    bool newTemperatureData;
+    
+    string SMS_sensors_button_address[2];
+    
+    string SMS_sensors_airmems_pressure_address;
+    
+    string SMS_sensors_IMU_ahrs_quat[4];
+    
+    string SMS_sensors_airmems_temperature_address;
+    string SMS_sensors_IMU_temperature_address;
+    
+    
+    
 };
