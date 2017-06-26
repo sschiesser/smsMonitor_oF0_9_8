@@ -128,6 +128,8 @@ public:
     
 	bool bleHidRunning;
 	// ofxOsc
+
+    
 	threadedOscReceiver * OscReceiverThread;
 	bool oscReceiverRunning;
 	threadedOscSender * OscSenderThread;

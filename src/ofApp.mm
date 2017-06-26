@@ -171,12 +171,11 @@ void ofApp::update() {
 	}
 
     if (MEINofxBLE->haveButtonData())
-        
     {
-
-        
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = MEINofxBLE->Button1Data();
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = MEINofxBLE->Button2Data();
+        OscSenderThread->newButtonData = true;
+
         MEINofxBLE->sethaveButtonDatafalse();
     }
     if (MEINofxBLE->haveAirmemsData())
@@ -184,6 +183,9 @@ void ofApp::update() {
         OscSenderThread->sendData[0].pressure = MEINofxBLE->PressureData();
         OscSenderThread->sendData[0].temperature[0] = MEINofxBLE->TemperatureData();
       //  NSLog(@"Temp in ofApp: %f", MEINofxBLE->TemperatureData());
+        OscSenderThread->newAirpressureData = true;
+        OscSenderThread->newTemperatureData = true;
+
         MEINofxBLE->sethaveAirmemsDatafalse();
     }
     if (MEINofxBLE->haveahrsData())
@@ -192,6 +194,9 @@ void ofApp::update() {
         for (int i = 0 ; i < 4; i++){
         OscSenderThread->sendData[0].quat[i] = MEINofxBLE->ahrsData(i);
         }
+        OscSenderThread->newIMUData = true;
+        OscSenderThread->newTemperatureData = true;
+
         MEINofxBLE->sethaveahrsDatafalse();
       /*  NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
         NSLog(@"Quat2 in ofApp %f", OscSenderThread->sendData[0].quat[1]);
@@ -314,7 +319,10 @@ void ofApp::draw() {
                         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
                         ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
                         if (ImGui::Button("Disconnect")) {
-                             MEINofxBLE->ofxBLE::scanPeripherals();
+                            
+                            OscSenderThread->stop();
+                            bleHidRunning = false;
+                            MEINofxBLE->ofxBLE::scanPeripherals();
                             
                         }
                     }
@@ -1170,7 +1178,7 @@ void ofApp::calcAhrs(int p)
 
 //--------------------------------------------------------------
 void ofApp::BLEdidDisconnect() {
-    OscSenderThread->stop();
+ //   OscSenderThread->stop();
 }
 
 //--------------------------------------------------------------
