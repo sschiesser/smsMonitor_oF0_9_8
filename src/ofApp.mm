@@ -26,8 +26,8 @@ void ofApp::setup() {
     
     
 	// Setup rawHID receiver
-	RawHidThread = new(threadedHidReceiver);
-	hidReceiverRunning = false;
+//	RawHidThread = new(threadedHidReceiver);
+//	hidReceiverRunning = false;
 
 	// Setup BLE receiver
 //	BleHidThread = new(threadedBleReceiver);
@@ -47,7 +47,7 @@ void ofApp::setup() {
 	// Setup ImGui
 	ImGuiIO io = ImGui::GetIO();
 	fontDisplay = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 14.f);
-	fontClock = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 24.f);
+	fontClock = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 14.f);
 	fontScale = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 10.f);
 	io.Fonts->GetTexDataAsRGBA32(&fontPx, &fontW, &fontH);
 
@@ -231,133 +231,108 @@ void ofApp::draw() {
 				// Left part with connected device & framerate
 				{
 					ImGui::BeginGroup();
-					/* HID device info */
-					ImGui::Text("Device xx");
+					/* BLE device info */
+                    if(MEINofxBLE->isConnected()) {
+                        ImGui::Text("Device: SMS sensors");
+                    }
+                    else {
+                        ImGui::Text("Device: --");
+                    }
 					/* Framerate */
-					ImGui::Text("Current framerate: %.1f FPS", ImGui::GetIO().Framerate);
+					ImGui::Text("Framerate: %.1f FPS", ImGui::GetIO().Framerate);
 					ImGui::EndGroup();
 				}
-				// Start/stop button
-				{
-					ImGui::SameLine(286);
-					ImGui::PushFont(fontClock);
-					if (bleHidRunning) {
-						ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-						if (ImGui::Button("Stop")) {
-							OscSenderThread->stop();
-							oscSenderRunning = false;
-
-							stopBleHid();
-
-//							BleHidThread->stop();
-							bleHidRunning = false;
-						}
-					}
-					else {
-						ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-						ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-						if (ImGui::Button("Start")) {
-							wordClockBase = ofGetSystemTime();
-//							BleHidThread->start();
-							bleHidRunning = true;
-
-							startBleHid();
-
-							OscSenderThread->start();
-							oscSenderRunning = true;
-						}
-					}
-					ImGui::PopStyleColor(3);
-					ImGui::PopFont();
-				}
                 
-                //Connect Button
+                // Timecode
                 {
-                    
-                    
-                    if (MEINofxBLE->isConnected() == false)
-                    {
-                        ImGui::SameLine(ImGui::GetWindowWidth()-100);
-                        ImGui::PushFont(fontClock);
-                        
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-                        if (ImGui::Button("Connect")) {
-                            
-                            //=================*DeviceList*=========================
-                            NSLog(@"look for Devices!");
-                        
-                            //    ofxBLE * MEINofxBLE;
-                            BLEConnectButton = true;
-                        
-                            MEINofxBLE->ofxBLE::scanPeripherals();
-                            
-                        }
-                    }/*
-                    else if (BLEConnectButton == true && MEINofxBLE->isConnected() == false){
-                        
-                        //NSLog(@"connecting button on");
-                        
-                        ImGui::SameLine(ImGui::GetWindowWidth()-120);
-                        ImGui::PushFont(fontClock);
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-                        if (ImGui::Button("connecting")) {
-                        }
-                        
-                    }*/
-                    else if (MEINofxBLE->isConnected() == true ){
-                        BLEConnectButton = false;
-                        ImGui::SameLine(ImGui::GetWindowWidth()-120);
-                        ImGui::PushFont(fontClock);
-                        ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-                        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-                        if (ImGui::Button("Disconnect")) {
-                            
-                            OscSenderThread->stop();
-                            bleHidRunning = false;
-                            MEINofxBLE->ofxBLE::scanPeripherals();
-                            
-                        }
+                    static long ts, ms, s, m, h;
+                    if (oscSenderRunning) {
+                        ts = getWordClock();
+                        ms = ts % 1000;
+                        s = ((ts - ms) / 1000) % 60;
+                        m = ((((ts - ms) / 1000) - s) / 60) % 60;
+                        h = (((((ts - ms) / 1000) - s) / 60) - m) / 60;
                     }
-                    
-                    ImGui::PopStyleColor(3);
-                    ImGui::PopFont();
-                    
+                    ImGui::SameLine(160);
+                    ImGui::BeginGroup();
+                    //					ImGui::PushFont(fontClock);
+                    ImGui::Text("Systime:");
+                    ImGui::Text("%ldh %02ldm %02lds %03ld", h, m, s, ms);
+                    //					ImGui::PopFont();
+                    ImGui::EndGroup();
                 }
                 
-                //connecting information
-                
-                {
-                    if(BLEConnectButton)
-                    {
-                        ImGui::SameLine(ImGui::GetWindowWidth()-300);
-                        ImGui::PushFont(fontClock);
-                        ImGui::Text("connecting...");
-                        ImGui::PopFont();
-                    }
-                }
-                
-                
-				// Timecode
+				// Buttons
 				{
-					ImGui::SameLine(360);
-					static long ts, ms, s, m, h;
-					if (oscReceiverRunning) {
-						ts = getWordClock();
-						ms = ts % 1000;
-						s = ((ts - ms) / 1000) % 60;
-						m = ((((ts - ms) / 1000) - s) / 60) % 60;
-						h = (((((ts - ms) / 1000) - s) / 60) - m) / 60;
-					}
+                    ImGui::SameLine(ImGui::GetWindowWidth()-60);
 					ImGui::PushFont(fontClock);
-					ImGui::Text("Systime: %ldh %02ldm %02lds %03ld", h, m, s, ms);
+                    ImGui::BeginGroup();
+                    {
+                        // Start/stop
+                        if (bleHidRunning) {
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
+                            if (ImGui::SmallButton("Stop")) {
+                                OscSenderThread->stop();
+                                oscSenderRunning = false;
+
+                                stopBleHid();
+
+//                              BleHidThread->stop();
+                                bleHidRunning = false;
+                            }
+                        }
+                        else {
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                            if (ImGui::SmallButton("Start")) {
+                                wordClockBase = ofGetSystemTime();
+//                              BleHidThread->start();
+                                bleHidRunning = true;
+
+                                startBleHid();
+
+                                OscSenderThread->start();
+                                oscSenderRunning = true;
+                            }
+                        }
+                        ImGui::PopStyleColor(3);
+                    
+                        // Connect
+                        if(MEINofxBLE->isConnected()) {
+                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
+                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
+                            if (ImGui::Button("Disconnect")) {
+                                OscSenderThread->stop();
+                                bleHidRunning = false;
+                                MEINofxBLE->ofxBLE::scanPeripherals();
+                            }
+                        }
+                        else {
+                            if(BLEConnectButton) {
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                                ImGui::SmallButton("...");
+                            }
+                            else {
+                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
+                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
+                                if(ImGui::SmallButton("Connect")) {
+                                    //=================*DeviceList*=========================
+                                    NSLog(@"looking for devices!");
+                                    BLEConnectButton = true;
+                                    MEINofxBLE->ofxBLE::scanPeripherals();
+                                }
+                            }
+                        }
+                        ImGui::PopStyleColor(3);
+                    }
+                    ImGui::EndGroup();
 					ImGui::PopFont();
 				}
 			}
@@ -950,8 +925,9 @@ void ofApp::draw() {
 			}
 		}
 	}
-	//gui.end();	//In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
+//	gui.end();	//In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
 
+    
 	//////////////////////////////////////////////////////////////////////////////////////////
 	//gui.begin();
 	 //1. Show a simple window
@@ -1010,6 +986,7 @@ void ofApp::draw() {
 	//{
 	//	//textureSource.draw(ofRandom(200), ofRandom(200));
 	//}
+     
 }
 
 //--------------------------------------------------------------

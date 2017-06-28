@@ -11,14 +11,14 @@
 #include "ThemeTest.h"
 #include "threadedOscReceiver.h"
 #include "threadedOscSender.h"
-#include "threadedHidReceiver.h"
+//#include "threadedHidReceiver.h"
 #include "smsData.h"
 
 #include "ofxBLE.h"
 
-#ifdef _WIN32
-#include "threadedBleReceiver.h"
-#endif
+//#ifdef _WIN32
+//#include "threadedBleReceiver.h"
+//#endif
 
 
 
@@ -116,8 +116,8 @@ public:
 //    ofxBLE * MEINofxBLE;
 
 	// rawHid
-	threadedHidReceiver * RawHidThread;
-	bool hidReceiverRunning;
+//	threadedHidReceiver * RawHidThread;
+//	bool hidReceiverRunning;
 	bool newBleValue;
 	// BLE
 #ifdef _WIN32
