@@ -273,7 +273,7 @@ void ofApp::draw() {
                             ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
                             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
                             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-                            if (ImGui::SmallButton("Stop")) {
+                            if (ImGui::SmallButton("   Stop    ")) {
                                 OscSenderThread->stop();
                                 oscSenderRunning = false;
 
@@ -287,7 +287,7 @@ void ofApp::draw() {
                             ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
                             ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
                             ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                            if (ImGui::SmallButton("Start")) {
+                            if (ImGui::SmallButton("   Start   ")) {
                                 wordClockBase = ofGetSystemTime();
 //                              BleHidThread->start();
                                 bleHidRunning = true;
@@ -316,13 +316,13 @@ void ofApp::draw() {
                                 ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                                ImGui::SmallButton("...");
+                                ImGui::SmallButton("     ...      ");
                             }
                             else {
                                 ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                                if(ImGui::SmallButton("Connect")) {
+                                if(ImGui::SmallButton("Connect   ")) {
                                     //=================*DeviceList*=========================
                                     NSLog(@"looking for devices!");
                                     BLEConnectButton = true;
