@@ -312,7 +312,7 @@ void ofApp::draw() {
                             }
                         }
                         else {
-                            if(BLEConnectButton) {
+                            if(MEINofxBLE->isSearching()) {
                                 ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
                                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
@@ -325,7 +325,6 @@ void ofApp::draw() {
                                 if(ImGui::SmallButton("Connect   ")) {
                                     //=================*DeviceList*=========================
                                     NSLog(@"looking for devices!");
-                                    BLEConnectButton = true;
                                     MEINofxBLE->ofxBLE::scanPeripherals();
                                 }
                             }

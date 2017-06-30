@@ -123,8 +123,6 @@ public:
 #ifdef _WIN32
 	threadedBleReceiver * BleHidThread;
 #endif
-    //Conecting
-    bool BLEConnectButton = false;
     
 	bool bleHidRunning;
 	// ofxOsc
