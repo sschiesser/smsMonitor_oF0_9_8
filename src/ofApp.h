@@ -150,14 +150,25 @@ public:
 	bool show_another_window;
 	
 	float floatValue;
-	ofImage imageButtonSource;
-	GLuint imageButtonID;
-	
-	ofPixels pixelsButtonSource;
-	GLuint pixelsButtonID;
-	
-	ofTexture textureSource;
-	GLuint textureSourceID;
+//	ofImage imageButtonSource;
+//	GLuint imageButtonID;
+//	ofPixels pixelsButtonSource;
+//	GLuint pixelsButtonID;
+//	ofTexture textureSource;
+//	GLuint textureSourceID;
+    
+    ofImage startOSCButtonSource;
+    GLuint startOSCButtonID;
+    ofImage stopOSCButtonSource;
+    GLuint stopOSCButtonID;
+    ofImage sensorsButtonSource;
+    GLuint sensorsButtonID;
+    ofImage remoteButtonSource;
+    GLuint remoteButtonID;
+    ofImage searchBLEButtonSource;
+    GLuint searchBLEButtonID;
+    ofImage searchingBLEButtonSource;
+    GLuint searchingBLEButtonID;
 	
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
