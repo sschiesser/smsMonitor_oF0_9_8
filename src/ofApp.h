@@ -59,7 +59,7 @@ const bool appDebug = false;
 #endif
 
 struct guiModules {
-	bool full[SMS_MAX_PERIPH];
+	bool sensors[SMS_MAX_PERIPH];
 	bool remote[SMS_MAX_PERIPH];
 };
 
