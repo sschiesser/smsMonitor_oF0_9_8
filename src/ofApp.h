@@ -148,6 +148,8 @@ public:
 	
 	bool show_test_window;
 	bool show_another_window;
+    
+    bool show_connect_window;
 	
 	float floatValue;
 //	ofImage imageButtonSource;
@@ -169,6 +171,7 @@ public:
     GLuint searchBLEButtonID;
     ofImage searchingBLEButtonSource;
     GLuint searchingBLEButtonID;
+    
 	
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];

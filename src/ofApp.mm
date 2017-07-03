@@ -75,6 +75,10 @@ void ofApp::setup() {
     remoteButtonSource.load("remote_G.png");
     remoteButtonID = gui.loadImage(remoteButtonSource);
     
+
+    searchBLEButtonSource.load("Button.png");
+    searchBLEButtonID = gui.loadImage(startOSCButtonSource);
+    
     //or have the loading done for you if you don't need the ofImage reference
     //imageButtonID = gui.loadImage("of.png");
     
@@ -312,7 +316,7 @@ void ofApp::draw() {
                             if (ImGui::Button("Disconnect")) {
                                 OscSenderThread->stop();
                                 bleHidRunning = false;
-                                MEINofxBLE->ofxBLE::scanPeripherals();
+                                MEINofxBLE->ofxBLE::disconnectPeripherals();
                             }
                             ImGui::PopStyleColor(3);
                         }
@@ -325,7 +329,7 @@ void ofApp::draw() {
                                 ImGui::PopStyleColor(3);
                             }
                             else {
-                                if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(88, 20), ImVec2(0,0), ImVec2(1,1), 0)) {
+                                if(ImGui::ImageButton((ImTextureID)(uintptr_t)searchBLEButtonID, ImVec2(88, 20), ImVec2(0,0), ImVec2(1,1), 0)) {
 //                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
 //                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
 //                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
@@ -333,7 +337,7 @@ void ofApp::draw() {
                                     //=================*DeviceList*=========================
                                     NSLog(@"looking for devices!");
                                     MEINofxBLE->ofxBLE::scanPeripherals();
-                                    ImGui::PopStyleColor(3);
+//                                    ImGui::PopStyleColor(3);
                                 }
                             }
                         }
@@ -345,6 +349,24 @@ void ofApp::draw() {
             ImGui::EndGroup();
         }
         ImGui::End();
+        
+        // connect window
+        if (MEINofxBLE->PeripherlasAreAvailable())
+        {
+            //note: ofVec2f and ImVec2f are interchangeable
+            ImGui::SetNextWindowSize(ofVec2f(200, 100), ImGuiSetCond_FirstUseEver);
+            ImGui::Begin("Connect Window", &show_connect_window);
+            ImGui::Text("Hello");
+            ImGui::BulletText("Bullet point 1");
+            ImGui::BulletText("Bullet point 2\nOn multiple lines");
+            ImGui::Bullet(); ImGui::Text("Bullet point 3 (two calls)");
+            ImGui::SameLine (300); ImGui::SmallButton("Button");
+            //ImGui::TreePop();
+            ImGui::End();
+        }
+        
+        
+        
         
         activeMods.sensors[0] = true;
         activeMods.sensors[1] = false;
@@ -1126,63 +1148,63 @@ void ofApp::draw() {
      //////////////////////////////////////////////////////////////////////////////////////////
      //gui.begin();
      //1. Show a simple window
-     {
-     ImGui::Text("Hello, world!");
-     ImGui::SliderFloat("Float", &floatValue, 0.0f, 1.0f);
-     
-     //this will change the app background color
-     ImGui::ColorEdit3("Background Color", (float*)&backgroundColor);
-     if (ImGui::Button("Test Window"))
-     {
-     show_test_window = !show_test_window;
-     }
-     
-     if (ImGui::Button("Another Window"))
-     {
-     //bitwise OR
-     show_another_window ^= 1;
-     
-     }
-     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-     }
-     //2. Show another window, this time using an explicit ImGui::Begin and ImGui::End
-     if (show_another_window)
-     {
-     //note: ofVec2f and ImVec2f are interchangeable
-     ImGui::SetNextWindowSize(ofVec2f(200, 100), ImGuiSetCond_FirstUseEver);
-     ImGui::Begin("Another Window", &show_another_window);
-     ImGui::Text("Hello");
-     ImGui::End();
-     }
-     
-     //3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
-     if (show_test_window)
-     {
-     ImGui::SetNextWindowPos(ofVec2f(650, 20), ImGuiSetCond_FirstUseEver);
-     ImGui::ShowTestWindow(&show_test_window);
-     }
-     
-     
-//     bool pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)imageButtonID, ImVec2(200, 200));
-//     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)pixelsButtonID, ImVec2(200, 200));
-//     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
+    {
+        ImGui::Text("Hello, world!");
+        ImGui::SliderFloat("Float", &floatValue, 0.0f, 1.0f);
+        
+        //this will change the app background color
+        ImGui::ColorEdit3("Background Color", (float*)&backgroundColor);
+        if (ImGui::Button("Test Window"))
+        {
+            show_test_window = !show_test_window;
+        }
+        
+        if (ImGui::Button("Another Window"))
+        {
+            //bitwise OR
+            show_another_window ^= 1;
+            
+        }
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    }
+    //2. Show another window, this time using an explicit ImGui::Begin and ImGui::End
+    if (show_another_window)
+    {
+        //note: ofVec2f and ImVec2f are interchangeable
+        ImGui::SetNextWindowSize(ofVec2f(200, 100), ImGuiSetCond_FirstUseEver);
+        ImGui::Begin("Another Window", &show_another_window);
+        ImGui::Text("Hello");
+        ImGui::End();
+    }
     
-     
-     if (doThemeColorsWindow)
-     {
-     gui.openThemeColorWindow();
-     
-     }
-     
-     //required to call this at end
-     gui.end();
-     
-     
-     
-     //if (textureSource.isAllocated())
-     //{
-     //	//textureSource.draw(ofRandom(200), ofRandom(200));
-     //}
+    //3. Show the ImGui test window. Most of the sample code is in ImGui::ShowTestWindow()
+    if (show_test_window)
+    {
+        ImGui::SetNextWindowPos(ofVec2f(650, 20), ImGuiSetCond_FirstUseEver);
+        ImGui::ShowTestWindow(&show_test_window);
+    }
+    
+    
+    //     bool pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)imageButtonID, ImVec2(200, 200));
+    //     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)pixelsButtonID, ImVec2(200, 200));
+    //     pressed = ImGui::ImageButton((ImTextureID)(uintptr_t)textureSourceID, ImVec2(200, 200));
+    
+    
+    if (doThemeColorsWindow)
+    {
+        gui.openThemeColorWindow();
+        
+    }
+    
+    //required to call this at end
+    gui.end();
+    
+    
+    
+    //if (textureSource.isAllocated())
+    //{
+    //	//textureSource.draw(ofRandom(200), ofRandom(200));
+    //}
 }
 
 //--------------------------------------------------------------
