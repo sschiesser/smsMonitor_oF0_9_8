@@ -1120,7 +1120,8 @@ void ofApp::draw() {
             }
         }
     }
-//    gui.end();	//In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
+    //gui.end();	//In between gui.begin() and gui.end() you can use ImGui as you would anywhere else
+    
     
      //////////////////////////////////////////////////////////////////////////////////////////
      //gui.begin();
