@@ -110,6 +110,7 @@ void ofApp::setup() {
     
     //starting Bluetooth
     MEINofxBLE = new(ofxBLE);
+    MEINofxBLE->connectedDevices = 0;
     
 }
 
@@ -243,7 +244,7 @@ void ofApp::draw() {
             // Header bar
             ImGui::BeginGroup();
             {
-                // Left part with connected device & framerate
+                // Framerate
                 {
                     ImGui::BeginGroup();
                     // Framerate
@@ -277,74 +278,43 @@ void ofApp::draw() {
                     ImGui::PushFont(fontClock);
                     ImGui::BeginGroup();
                     {
-                        // Start/stop
+                        // OSC
                         if (bleHidRunning) {
+                            // if BLE running... STOP
                             if(ImGui::ImageButton((ImTextureID)(uintptr_t)stopOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-//                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-//                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-//                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-//                            if (ImGui::SmallButton(" Stop OSC  ")) {
                                 OscSenderThread->stop();
                                 oscSenderRunning = false;
-                                
                                 stopBleHid();
-                                
                                 //                              BleHidThread->stop();
                                 bleHidRunning = false;
                             }
-//                            ImGui::PopStyleColor(3);
                         }
                         else {
+                            // if BLE NOT running... START
                             if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-//                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-//                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-//                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-//                            if (ImGui::SmallButton(" Start OSC  ")) {
-                                wordClockBase = ofGetSystemTime();
-                                bleHidRunning = true;
-                                
+                               wordClockBase = ofGetSystemTime();
+                               bleHidRunning = true;
                                 startBleHid();
-                                
                                 OscSenderThread->start();
                                 oscSenderRunning = true;
                             }
-//                            ImGui::PopStyleColor(3);
                         }
-
                         
-                        // Connect
-                        if(MEINofxBLE->isConnected()) {
-                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
-                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
-                            if (ImGui::Button("Disconnect")) {
-                                OscSenderThread->stop();
-                                bleHidRunning = false;
-                                MEINofxBLE->ofxBLE::scanPeripherals();
-                            }
-                            ImGui::PopStyleColor(3);
-                        }
-                        else {
-                            if(MEINofxBLE->isSearching()) {
-//                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 1.0f, 0.6f, 0.6f));
-//                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 1.0f, 0.7f, 0.7f));
-//                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 1.0f, 0.8f, 0.8f));
-                                ImGui::ImageButton((ImTextureID)(uintptr_t)searchingBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0);
-//                                ImGui::SmallButton("       ...       ");
-//                                ImGui::PopStyleColor(3);
-                            }
-                            else {
+                        // BLE
+                        if(MEINofxBLE->connectedDevices < 1) {
+                            if(!MEINofxBLE->isSearching()) {
                                 if(ImGui::ImageButton((ImTextureID)(uintptr_t)searchBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-//                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
-//                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
-//                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
-//                                if(ImGui::SmallButton("   Search    ")) {
                                     //=================*DeviceList*=========================
                                     NSLog(@"looking for devices!");
                                     MEINofxBLE->ofxBLE::scanPeripherals();
-//                                    ImGui::PopStyleColor(3);
                                 }
                             }
+                            else {
+                                ImGui::ImageButton((ImTextureID)(uintptr_t)searchingBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0);
+                            }
+                        }
+                        else {
+                            ImGui::ImageButton((ImTextureID)(uintptr_t)searchDisabledID, ImVec2(72, 16), ImVec2(0, 0), ImVec2(1, 1), 0);
                         }
                     }
                     ImGui::EndGroup();
@@ -1360,12 +1330,15 @@ void ofApp::calcAhrs(int p)
 
 //--------------------------------------------------------------
 void ofApp::BLEdidDisconnect() {
+    NSLog(@"ofApp::BLEdidDisconnect()");
+    MEINofxBLE->connectedDevices -= 1;
     //   OscSenderThread->stop();
 }
 
 //--------------------------------------------------------------
 void ofApp::BLEdidConnect() {
     NSLog(@"ofApp::BLEdidConnect()");
+    MEINofxBLE->connectedDevices += 1;
     // OscSenderThread->start();
     
 }
