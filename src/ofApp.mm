@@ -68,11 +68,19 @@ void ofApp::setup() {
 //    imageButtonSource.load("of.png");
 //    imageButtonID = gui.loadImage(imageButtonSource);
     
-    startOSCButtonSource.load("Button.png");
+    startOSCButtonSource.load("startOSC_0xFCE275.png");
     startOSCButtonID = gui.loadImage(startOSCButtonSource);
-    sensorsButtonSource.load("sensors_B.png");
+    stopOSCButtonSource.load("stopOSC_0xFCD32C.png");
+    stopOSCButtonID = gui.loadImage(stopOSCButtonSource);
+    searchBLEButtonSource.load("search_0x1B75BC.png");
+    searchBLEButtonID = gui.loadImage(searchBLEButtonSource);
+    searchDisabledButtonSource.load("search_0x7BC7EF.png");
+    searchDisabledID = gui.loadImage(searchDisabledButtonSource);
+    searchingBLEButtonSource.load("searching_0x7BC7EF.png");
+    searchingBLEButtonID = gui.loadImage(searchingBLEButtonSource);
+    sensorsButtonSource.load("sensor_0x0B9A39.png");
     sensorsButtonID = gui.loadImage(sensorsButtonSource);
-    remoteButtonSource.load("remote_G.png");
+    remoteButtonSource.load("remote_0xFF3300.png");
     remoteButtonID = gui.loadImage(remoteButtonSource);
     
     //or have the loading done for you if you don't need the ofImage reference
@@ -265,13 +273,13 @@ void ofApp::draw() {
                 
                 // Buttons
                 {
-                    ImGui::SameLine(ImGui::GetWindowWidth()-88);
+                    ImGui::SameLine(ImGui::GetWindowWidth()-80);
                     ImGui::PushFont(fontClock);
                     ImGui::BeginGroup();
                     {
                         // Start/stop
                         if (bleHidRunning) {
-                            if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(70, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
+                            if(ImGui::ImageButton((ImTextureID)(uintptr_t)stopOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
 //                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
 //                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.9f, 0.9f));
 //                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 1.0f, 1.0f));
@@ -287,7 +295,7 @@ void ofApp::draw() {
 //                            ImGui::PopStyleColor(3);
                         }
                         else {
-                            if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(70, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
+                            if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
 //                            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
 //                            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
 //                            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
@@ -318,14 +326,15 @@ void ofApp::draw() {
                         }
                         else {
                             if(MEINofxBLE->isSearching()) {
-                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 1.0f, 0.6f, 0.6f));
-                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 1.0f, 0.7f, 0.7f));
-                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 1.0f, 0.8f, 0.8f));
-                                ImGui::SmallButton("       ...       ");
-                                ImGui::PopStyleColor(3);
+//                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 1.0f, 0.6f, 0.6f));
+//                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 1.0f, 0.7f, 0.7f));
+//                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 1.0f, 0.8f, 0.8f));
+                                ImGui::ImageButton((ImTextureID)(uintptr_t)searchingBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0);
+//                                ImGui::SmallButton("       ...       ");
+//                                ImGui::PopStyleColor(3);
                             }
                             else {
-                                if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(88, 20), ImVec2(0,0), ImVec2(1,1), 0)) {
+                                if(ImGui::ImageButton((ImTextureID)(uintptr_t)searchBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
 //                                ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1 / 7.0f, 0.6f, 0.6f));
 //                                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1 / 7.0f, 0.7f, 0.7f));
 //                                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1 / 7.0f, 0.8f, 0.8f));
@@ -333,7 +342,7 @@ void ofApp::draw() {
                                     //=================*DeviceList*=========================
                                     NSLog(@"looking for devices!");
                                     MEINofxBLE->ofxBLE::scanPeripherals();
-                                    ImGui::PopStyleColor(3);
+//                                    ImGui::PopStyleColor(3);
                                 }
                             }
                         }

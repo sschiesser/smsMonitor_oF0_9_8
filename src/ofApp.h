@@ -167,6 +167,8 @@ public:
     GLuint remoteButtonID;
     ofImage searchBLEButtonSource;
     GLuint searchBLEButtonID;
+    ofImage searchDisabledButtonSource;
+    GLuint searchDisabledID;
     ofImage searchingBLEButtonSource;
     GLuint searchingBLEButtonID;
 	
