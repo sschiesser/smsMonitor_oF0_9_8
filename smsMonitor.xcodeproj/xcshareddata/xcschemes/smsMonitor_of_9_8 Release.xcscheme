@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-               BuildableName = "smsMonitor_of_9_8.app"
-               BlueprintName = "smsMonitor_of_9_8"
-               ReferencedContainer = "container:smsMonitor_of_9_8.xcodeproj">
+               BuildableName = "smsMonitor.app"
+               BlueprintName = "smsMonitor"
+               ReferencedContainer = "container:smsMonitor.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "smsMonitor_of_9_8.app"
-            BlueprintName = "smsMonitor_of_9_8"
-            ReferencedContainer = "container:smsMonitor_of_9_8.xcodeproj">
+            BuildableName = "smsMonitor.app"
+            BlueprintName = "smsMonitor"
+            ReferencedContainer = "container:smsMonitor.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "smsMonitor_of_9_8.app"
-            BlueprintName = "smsMonitor_of_9_8"
-            ReferencedContainer = "container:smsMonitor_of_9_8.xcodeproj">
+            BuildableName = "smsMonitor.app"
+            BlueprintName = "smsMonitor"
+            ReferencedContainer = "container:smsMonitor.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E4B69B5A0A3A1756003C02F2"
-            BuildableName = "smsMonitor_of_9_8.app"
-            BlueprintName = "smsMonitor_of_9_8"
-            ReferencedContainer = "container:smsMonitor_of_9_8.xcodeproj">
+            BuildableName = "smsMonitor.app"
+            BlueprintName = "smsMonitor"
+            ReferencedContainer = "container:smsMonitor.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
