@@ -112,12 +112,8 @@ public:
 	void BLEdidConnect();
 	void BLEdidRecieveData(unsigned char *data, int length);
 	void BLEdidUpdateRSSI(int rssi);
-	
-//    ofxBLE * MEINofxBLE;
 
-	// rawHid
-//	threadedHidReceiver * RawHidThread;
-//	bool hidReceiverRunning;
+
 	bool newBleValue;
 	// BLE
 #ifdef _WIN32
@@ -150,12 +146,6 @@ public:
 	bool show_another_window;
 	
 	float floatValue;
-//	ofImage imageButtonSource;
-//	GLuint imageButtonID;
-//	ofPixels pixelsButtonSource;
-//	GLuint pixelsButtonID;
-//	ofTexture textureSource;
-//	GLuint textureSourceID;
     
     ofImage startOSCButtonSource;
     GLuint startOSCButtonID;
@@ -174,5 +164,5 @@ public:
 	
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
-    
+    int guiFramerate;
 };
