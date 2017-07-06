@@ -131,6 +131,13 @@ public:
 	
 	ofTrueTypeFont font;
 	
+    ofQuaternion displayQuat;
+    //a place to store the mouse position so we can measure incremental change
+    ofVec2f lastMouse;
+    
+    //slows down the rotation 1 = 1 degree per pixel
+    float dampen;
+    
 	long wordClockBase;
 	
 	// ofxImGui
@@ -161,7 +168,7 @@ public:
     GLuint searchDisabledID;
     ofImage searchingBLEButtonSource;
     GLuint searchingBLEButtonID;
-	
+	    
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
     int guiFramerate;

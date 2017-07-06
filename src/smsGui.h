@@ -3,13 +3,13 @@
 /* --------------------------------------------------------------
 *     MACROS
 * -------------------------------------------------------------- */
-#define GUI_WINDOW_WIDTH                    350
+#define GUI_WINDOW_WIDTH                    700
 #define GUI_WINDOW_HEIGHT                   720
 #define GUI_HEADER_WIDTH                    GUI_WINDOW_WIDTH
 #define GUI_HEADER_HEIGHT                     48
 
 //#define GUI_MODULE_WIDTH                  (GUI_WINDOW_WIDTH / 4)
-#define GUI_MOD_SENSORS_WIDTH            (GUI_WINDOW_WIDTH)
+#define GUI_MOD_SENSORS_WIDTH            (GUI_WINDOW_WIDTH/2)
 #define GUI_MOD_SENSORS_HEIGHT          520
 #define GUI_MOD_REMOTE_WIDTH            GUI_MOD_SENSORS_WIDTH
 #define GUI_MOD_REMOTE_HEIGHT           (GUI_WINDOW_HEIGHT - GUI_MOD_SENSORS_HEIGHT)
