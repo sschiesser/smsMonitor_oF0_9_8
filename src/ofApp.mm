@@ -8,6 +8,7 @@
 #endif
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+#define QUAT_LP_FACTOR              (1.0)
 
 ofxBLE * MEINofxBLE;
 ofBoxPrimitive* myBox;
@@ -23,9 +24,6 @@ void ofApp::setup() {
         printf("*************************************\n\r");
     }
     ofSetLogLevel(OF_LOG_VERBOSE);
-    
-    
-    
     
     // Setup rawHID receiver
     //	RawHidThread = new(threadedHidReceiver);
@@ -58,7 +56,8 @@ void ofApp::setup() {
     gui.setup();
     
     //backgroundColor is stored as an ImVec4 type but can handle ofColor
-    backgroundColor = ofColor(114, 144, 154);
+//    backgroundColor = ofColor(114, 144, 154);
+    backgroundColor = ofColor::black;
     
     if (!appDebug) ofSetEscapeQuitsApp(false);
     ofSetWindowTitle(titleString);
@@ -109,21 +108,21 @@ void ofApp::setup() {
     //BleHidThread->start();
     //BleHidThread->bleHidDevice.openDevice(AGuid);
     
-    myBox = new(ofBoxPrimitive);
-    myBox->set(10, 40, 100);
-    myBox->setPosition(3*ofGetWidth()/4, ofGetHeight()/2, 40);
-    myBox->setSideColor(0, ofColor::magenta);
-    myBox->setSideColor(2, ofColor::magenta);
-    myBox->setSideColor(1, ofColor::cyan);
-    myBox->setSideColor(3, ofColor::cyan);
-    myBox->setSideColor(4, ofColor::yellow);
-    myBox->setSideColor(5, ofColor::yellow);
-    
+//    myBox = new(ofBoxPrimitive);
+//    myBox->set(10, 40, 100);
+//    myBox->setPosition(3*ofGetWidth()/4, ofGetHeight()/4, 40);
+//    myBox->setSideColor(0, ofColor::magenta);
+//    myBox->setSideColor(2, ofColor::magenta);
+//    myBox->setSideColor(1, ofColor::cyan);
+//    myBox->setSideColor(3, ofColor::cyan);
+//    myBox->setSideColor(4, ofColor::yellow);
+//    myBox->setSideColor(5, ofColor::yellow);
+
     myCone = new(ofConePrimitive);
-    myCone->set(40, 100);
-    myCone->setPosition(3*ofGetWidth()/4, ofGetHeight()/2, 40);
-    myCone->setTopColor(ofColor::cyan);
-    myCone->setCapColor(ofColor::magenta);
+    myCone->set(40, 160);
+    myCone->setPosition(480, 180, 0);
+    myCone->setTopColor(ofColor(102, 100, 32));
+    myCone->setCapColor(ofColor::yellow);
     
     dampen = 0.01;
     
@@ -241,16 +240,19 @@ void ofApp::update() {
 //        cout << "deltaIMU: " << deltaIMU << endl;
         OscSenderThread->sendData[0].delta[SMSDATA_DELTA_GYRO_POS] = deltaIMU;
         
-        double q[4];
+        static double oldQ[4];
+        double newQ[4];
+        double displayQ[4];
         for (int i = 0 ; i < 4; i++){
             OscSenderThread->sendData[0].quat[i] = MEINofxBLE->ahrsData(i);
-            q[i] = OscSenderThread->sendData[0].quat[i];
+            newQ[i] = OscSenderThread->sendData[0].quat[i];
+            displayQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
+            oldQ[i] = newQ[i];
         }
         OscSenderThread->newIMUData = true;
         OscSenderThread->newTemperatureData = true;
         
-        displayQuat.set(q[0], q[1], q[2], q[3]);
-//        cout << "displayQuat set @ " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+        displayQuat.set(displayQ[0], displayQ[1], displayQ[2], displayQ[3]);
         
         MEINofxBLE->sethaveahrsDatafalse();
         /*  NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
@@ -266,24 +268,25 @@ bool doThemeColorsWindow = true;
 //--------------------------------------------------------------
 void ofApp::draw() {
     ofSetBackgroundColor(backgroundColor);
+
+    activeMods.sensors[0] = (MEINofxBLE->isConnected()) ? true : false;
+    activeMods.sensors[1] = false;
+    activeMods.sensors[2] = false;
+    activeMods.sensors[3] = false;
+    activeMods.remote[0] = false;
+    activeMods.remote[1] = false;
+    activeMods.remote[2] = false;
+    activeMods.remote[3] = false;
+
+    if (activeMods.sensors[0])
+    {
+//        myBox->rotate(displayQuat);
+//        myBox->draw();
     
-//    myBox->rotate(displayQuat);
-//    myBox->draw();
-    
-    myCone->rotate(displayQuat);
-    myCone->draw();
-    cout << "displayQuat @ "  << displayQuat.x() << " " << displayQuat.y() << "  " <<  displayQuat.z() << " " <<  displayQuat.w() << endl;
-    
-//    ofPushMatrix();
-//    ofTranslate(3*ofGetWidth()/4, ofGetHeight()/2, 40);
-//    ofVec3f axis;
-//    float angle;
-//    displayQuat.getRotate(angle, axis);
-//    ofRotate(angle, axis.x, axis.y, axis.z);
-//    ofSetColor(111, 222, 0);
-//    ofDrawCone(0, 0, 0, 40, 100);
-////    ofDrawBox(0, 0, 0, 10, 40, 100);
-//    ofPopMatrix();
+        myCone->setOrientation(displayQuat);
+        myCone->draw();
+//        cout << "displayQuat @ "  << displayQuat.x() << " " << displayQuat.y() << "  " <<  displayQuat.z() << " " <<  displayQuat.w() << endl;
+    }
     
     gui.begin();
     {
@@ -382,15 +385,6 @@ void ofApp::draw() {
                 ImGui::EndGroup();
             }
             ImGui::End();
-            
-            activeMods.sensors[0] = (MEINofxBLE->isConnected()) ? true : false;
-            activeMods.sensors[1] = false;
-            activeMods.sensors[2] = false;
-            activeMods.sensors[3] = false;
-            activeMods.remote[0] = false;
-            activeMods.remote[1] = false;
-            activeMods.remote[2] = false;
-            activeMods.remote[3] = false;
             
             // module windows
             for (int mod = 0; mod < SMS_MAX_PERIPH; mod++) {
