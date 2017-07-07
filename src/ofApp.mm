@@ -47,7 +47,7 @@ void ofApp::setup() {
     // Setup ImGui
     ImGuiIO io = ImGui::GetIO();
     fontDisplay = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 14.f);
-    fontClock = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 14.f);
+    fontClock = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 28.f);
     fontScale = io.Fonts->AddFontFromFileTTF(&ofToDataPath("lucidagrande.ttf")[0], 10.f);
     io.Fonts->GetTexDataAsRGBA32(&fontPx, &fontW, &fontH);
     
@@ -110,7 +110,7 @@ void ofApp::setup() {
 
     myCone = new(ofConePrimitive);
     myCone->set(40, 160);
-    myCone->setPosition(480, 180, 0);
+    myCone->setPosition(454, 160, 0);
     myCone->setTopColor(ofColor(102, 100, 32));
     myCone->setCapColor(ofColor::yellow);
     
@@ -195,6 +195,7 @@ void ofApp::update() {
     
     if(MEINofxBLE->startClock)
     {
+        OscSenderThread->start();
         wordClockBase = ofGetSystemTime();
         MEINofxBLE->startClock = false;
     }
@@ -249,11 +250,11 @@ void ofApp::update() {
         displayQuat.set(displayQ[0], displayQ[1], displayQ[2], displayQ[3]);
         
         MEINofxBLE->sethaveahrsDatafalse();
-        /*  NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
-         NSLog(@"Quat2 in ofApp %f", OscSenderThread->sendData[0].quat[1]);
-         NSLog(@"Quat3 in ofApp %f", OscSenderThread->sendData[0].quat[2]);
-         NSLog(@"Quat4 in ofApp %f", OscSenderThread->sendData[0].quat[3]);
-         */
+//        NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
+//        NSLog(@"Quat2 in ofApp %f", OscSenderThread->sendData[0].quat[1]);
+//        NSLog(@"Quat3 in ofApp %f", OscSenderThread->sendData[0].quat[2]);
+//        NSLog(@"Quat4 in ofApp %f", OscSenderThread->sendData[0].quat[3]);
+        
     }
     
 }
@@ -320,17 +321,18 @@ void ofApp::draw() {
                         }
                         ImGui::SameLine(120);
                         ImGui::BeginGroup();
-                        //					ImGui::PushFont(fontClock);
-                        ImGui::Text("Systime:");
-                        ImGui::Text("%ldh %02ldm %02lds %03ld", h, m, s, ms);
-                        //					ImGui::PopFont();
+                        ImGui::PushFont(fontClock);
+//                        ImGui::Text("Systime:");
+//                        ImGui::Text("%ldh %02ldm %02lds %03ld", h, m, s, ms);
+                        ImGui::Text("Systime: %ldh %02ldm %02lds %03ld", h, m, s, ms);
+                        ImGui::PopFont();
                         ImGui::EndGroup();
                     }
                     
                     // Buttons
                     {
                         ImGui::SameLine(ImGui::GetWindowWidth()-80);
-                        ImGui::PushFont(fontClock);
+//                        ImGui::PushFont(fontClock);
                         ImGui::BeginGroup();
                         {
                             // OSC
@@ -339,7 +341,7 @@ void ofApp::draw() {
                                 if(ImGui::ImageButton((ImTextureID)(uintptr_t)stopOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
                                     OscSenderThread->stop();
                                     oscSenderRunning = false;
-                                    stopBleHid();
+//                                    stopBleHid();
                                     //                              BleHidThread->stop();
                                     MEINofxBLE->oscRunning = false;
                                 }
@@ -348,7 +350,7 @@ void ofApp::draw() {
                                 // if BLE NOT running... START
                                 if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
                                     MEINofxBLE->startClock = true;
-                                    startBleHid();
+//                                    startBleHid();
                                     OscSenderThread->start();
                                     oscSenderRunning = true;
                                     MEINofxBLE->oscRunning = true;
@@ -374,7 +376,7 @@ void ofApp::draw() {
                             }
                         }
                         ImGui::EndGroup();
-                        ImGui::PopFont();
+//                        ImGui::PopFont();
                     }
                 }
                 ImGui::EndGroup();
@@ -604,9 +606,9 @@ void ofApp::draw() {
                                     ImGui::Text("quat1:"); ImGui::SameLine(56);
                                     ImGui::PushItemWidth(140);
                                     string id = "##Q1" + ofToString(mod);
-                                    ImGui::SliderFloat(id.c_str(), &ahrs[0], 0.0f, 1.0f); ImGui::SameLine(204);
+                                    ImGui::SliderFloat(id.c_str(), &ahrs[0], -1.0f, 1.0f); ImGui::SameLine(204);
                                     string idPlot = "##ahrsQ1Plot" + ofToString(mod);
-                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[0].Data, ahrsPlot[0].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[0].Data, ahrsPlot[0].Size, 0, "", -1.0f, 1.0f, ImVec2(0, 20));
                                     ImGui::PopItemWidth();
                                 }
                                 // Q2
@@ -614,9 +616,9 @@ void ofApp::draw() {
                                     ImGui::Text("quat2:"); ImGui::SameLine(56);
                                     ImGui::PushItemWidth(140);
                                     string id = "##Q2" + ofToString(mod);
-                                    ImGui::SliderFloat(id.c_str(), &ahrs[1], 0.0f, 1.0f); ImGui::SameLine(204);
+                                    ImGui::SliderFloat(id.c_str(), &ahrs[1], -1.0f, 1.0f); ImGui::SameLine(204);
                                     string idPlot = "##ahrsQ2Plot" + ofToString(mod);
-                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[1].Data, ahrsPlot[1].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[1].Data, ahrsPlot[1].Size, 0, "", -1.0f, 1.0f, ImVec2(0, 20));
                                     ImGui::PopItemWidth();
                                 }
                                 // Q3
@@ -624,9 +626,9 @@ void ofApp::draw() {
                                     ImGui::Text("quat3:"); ImGui::SameLine(56);
                                     ImGui::PushItemWidth(140);
                                     string id = "##Q3" + ofToString(mod);
-                                    ImGui::SliderFloat(id.c_str(), &ahrs[2], 0.0f, 1.0f); ImGui::SameLine(204);
+                                    ImGui::SliderFloat(id.c_str(), &ahrs[2], -1.0f, 1.0f); ImGui::SameLine(204);
                                     string idPlot = "##ahrsQ3Plot" + ofToString(mod);
-                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[2].Data, ahrsPlot[2].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[2].Data, ahrsPlot[2].Size, 0, "", -1.0f, 1.0f, ImVec2(0, 20));
                                     ImGui::PopItemWidth();
                                 }
                                 // Q4
@@ -634,9 +636,9 @@ void ofApp::draw() {
                                     ImGui::Text("quat4:"); ImGui::SameLine(56);
                                     ImGui::PushItemWidth(140);
                                     string id = "##Q4" + ofToString(mod);
-                                    ImGui::SliderFloat(id.c_str(), &ahrs[3], 0.0f, 1.0f); ImGui::SameLine(204);
+                                    ImGui::SliderFloat(id.c_str(), &ahrs[3], -1.0f, 1.0f); ImGui::SameLine(204);
                                     string idPlot = "##ahrsQ4Plot" + ofToString(mod);
-                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[3].Data, ahrsPlot[3].Size, 0, "", 0.0f, 1.0f, ImVec2(0, 20));
+                                    ImGui::PlotLines(idPlot.c_str(), ahrsPlot[3].Data, ahrsPlot[3].Size, 0, "", -1.0f, 1.0f, ImVec2(0, 20));
                                     ImGui::PopItemWidth();
                                 }
                                 

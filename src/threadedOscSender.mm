@@ -21,7 +21,13 @@ threadedOscSender::~threadedOscSender()
 //--------------------------------------------------------------
 void threadedOscSender::setup()
 {
-	for (int i = 0; i < OSC_SENDER_MAX; i++) {
+    oscSenderPort[0] = OSC_SENDER_DEFAULT_PORT;
+    oscSenderIp[0] = OSC_SENDER_DEFAULT_IP;
+    oscSenderActive[0] = true;
+    oscSenderMode[0] = OSC_SENDER_MODE_NORMAL;
+    oscSender[0].setup(oscSenderIp[0], oscSenderPort[0]);
+    
+	for (int i = 1; i < OSC_SENDER_MAX; i++) {
 		oscSenderPort[i] = OSC_SENDER_DEFAULT_PORT;
 		oscSenderIp[i] = OSC_SENDER_DEFAULT_IP;
 		oscSenderActive[i] = false;
@@ -44,10 +50,7 @@ void threadedOscSender::setup()
     
     SMS_sensors_airmems_pressure_address = "/sabre/SMS_sensors/airpressure";
 
-    SMS_sensors_IMU_ahrs_quat[0] = "/sabre/SMS_sensors/motion/ahars/quat1";
-    SMS_sensors_IMU_ahrs_quat[1] = "/sabre/SMS_sensors/motion/ahars/quat2";
-    SMS_sensors_IMU_ahrs_quat[2] = "/sabre/SMS_sensors/motion/ahars/quat3";
-    SMS_sensors_IMU_ahrs_quat[3] = "/sabre/SMS_sensors/motion/ahars/quat4";
+    SMS_sensors_IMU_quat_address = "/sabre/SMS_sensors/motion/quat";
 
     SMS_sensors_airmems_temperature_address = "/sabre/SMS_sensors/temperature/breath";
     SMS_sensors_IMU_temperature_address = "/sabre/SMS_sensors/temperature/room";
@@ -121,7 +124,7 @@ void threadedOscSender::threadedFunction()
                 m[1].addIntArg(sendData[0].button[SMSDATA_BUTTON_B1_POS]);
                 oscSender[0].sendMessage( m[1] );
                 
-                 NSLog(@"button send over osc");
+//                 NSLog(@"button sent over OSC");
                 newButtonData = false;
                 
             }
@@ -135,7 +138,7 @@ void threadedOscSender::threadedFunction()
                 m[2].addIntArg(sendData[0].pressure);
                 oscSender[0].sendMessage( m[2] );
                 
-                
+//                NSLog(@"pressure sent over OSC");
                 newAirpressureData = false;
             }
             
@@ -143,16 +146,20 @@ void threadedOscSender::threadedFunction()
             
             if (newIMUData){
                 
-                for (int j = 3; j < 7; j++){
+//                for (int j = 3; j < 7; j++){
+                
+                m[3].clear();
+                m[3].setAddress(SMS_sensors_IMU_quat_address);
+                m[3].addFloatArg(sendData[0].quat[0]);
+                m[3].addFloatArg(sendData[0].quat[1]);
+                m[3].addFloatArg(sendData[0].quat[2]);
+                m[3].addFloatArg(sendData[0].quat[3]);
+                
+                oscSender[0].sendMessage( m[3] );
                     
-                    m[j].clear();
-                    m[j].setAddress(SMS_sensors_IMU_ahrs_quat[j-3]);
-                    m[j].addIntArg(sendData[0].quat[j-3]);
-                    oscSender[0].sendMessage( m[j] );
-                    
-                    
+//                    NSLog(@"IMU sent over OSC");
                     newIMUData = false;
-                }
+//                }
             }
             
             //send temperatureData
