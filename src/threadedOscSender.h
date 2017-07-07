@@ -39,6 +39,7 @@ public:
 	void start();
 	void stop();
 	void threadedFunction();
+    void resetValues();
 
 	ofxOscSender oscSender[OSC_SENDER_MAX];
 	bool oscSenderActive[OSC_SENDER_MAX];

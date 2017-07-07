@@ -55,6 +55,34 @@ void threadedOscSender::setup()
     
 }
 
+void threadedOscSender::resetValues()
+{
+    for(int i = 0; i < SMS_MAX_PERIPH; i++) {
+        sendData->pressure = 0;
+        sendData->battery = 0;
+        sendData->wordClock = 0;
+        
+        for(int j = 0; j < 2; j++) {
+            sendData->button[j] = 0;
+            sendData->temperature[j] = 0;
+            sendData->joystick[j] = 0.0;
+        }
+        
+        for(int j = 0; j < 3; j++) {
+            sendData->gyro[j] = 0.0;
+            sendData->accel[j] = 0.0;
+            sendData->compass[j] = 0.0;
+            sendData->delta[j] = 0;
+            sendData->ahrs[j] = 0.0;
+        }
+        
+        for(int j = 0; j < 4; j++) {
+            sendData->timestamp[j] = 0;
+            sendData->quat[j] = 0.0;
+        }
+    }
+}
+
 //--------------------------------------------------------------
 void threadedOscSender::start()
 {

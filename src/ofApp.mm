@@ -107,16 +107,6 @@ void ofApp::setup() {
     //CLSIDFromString(TEXT(TO_SEARCH_DEVICE_UUID), &AGuid);
     //BleHidThread->start();
     //BleHidThread->bleHidDevice.openDevice(AGuid);
-    
-//    myBox = new(ofBoxPrimitive);
-//    myBox->set(10, 40, 100);
-//    myBox->setPosition(3*ofGetWidth()/4, ofGetHeight()/4, 40);
-//    myBox->setSideColor(0, ofColor::magenta);
-//    myBox->setSideColor(2, ofColor::magenta);
-//    myBox->setSideColor(1, ofColor::cyan);
-//    myBox->setSideColor(3, ofColor::cyan);
-//    myBox->setSideColor(4, ofColor::yellow);
-//    myBox->setSideColor(5, ofColor::yellow);
 
     myCone = new(ofConePrimitive);
     myCone->set(40, 160);
@@ -124,13 +114,11 @@ void ofApp::setup() {
     myCone->setTopColor(ofColor(102, 100, 32));
     myCone->setCapColor(ofColor::yellow);
     
-    dampen = 0.01;
-    
     //starting Bluetooth
     MEINofxBLE = new(ofxBLE);
     MEINofxBLE->connectedDevices = 0;
     MEINofxBLE->oscRunning = false;
-    
+    MEINofxBLE->startClock = false;
 }
 
 //--------------------------------------------------------------
@@ -203,6 +191,12 @@ void ofApp::update() {
         if (appDebug) cout << "Input in periph#" << OscReceiverThread->haveInput << endl;
         remapData(OscReceiverThread->haveInput);
         OscReceiverThread->haveInput = -1;
+    }
+    
+    if(MEINofxBLE->startClock)
+    {
+        wordClockBase = ofGetSystemTime();
+        MEINofxBLE->startClock = false;
     }
     
     if (MEINofxBLE->haveButtonData())
@@ -317,7 +311,7 @@ void ofApp::draw() {
                     // Timecode
                     {
                         static long ts, ms, s, m, h;
-                        if (oscSenderRunning) {
+                        if (MEINofxBLE->oscRunning) {
                             ts = getWordClock();
                             ms = ts % 1000;
                             s = ((ts - ms) / 1000) % 60;
@@ -353,7 +347,7 @@ void ofApp::draw() {
                             else {
                                 // if BLE NOT running... START
                                 if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-                                    wordClockBase = ofGetSystemTime();
+                                    MEINofxBLE->startClock = true;
                                     startBleHid();
                                     OscSenderThread->start();
                                     oscSenderRunning = true;
@@ -365,6 +359,7 @@ void ofApp::draw() {
                             if(MEINofxBLE->connectedDevices < 1) {
                                 if(!MEINofxBLE->isSearching()) {
                                     if(ImGui::ImageButton((ImTextureID)(uintptr_t)searchBLEButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
+                                        OscSenderThread->resetValues();
                                         //=================*DeviceList*=========================
                                         NSLog(@"looking for devices!");
                                         MEINofxBLE->ofxBLE::scanPeripherals();
@@ -656,18 +651,24 @@ void ofApp::draw() {
                             nodeFlags |= ImGuiTreeNodeFlags_CollapsingHeader;
                             bool showHeader = true;
                             if (ImGui::CollapsingHeader("Buttons", &showHeader, nodeFlags)) {
+//                                bool b[2] = {0};
+//                                b[SMSDATA_BUTTON_B0_POS] = OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B0_POS];
+//                                b[SMSDATA_BUTTON_B1_POS] = OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B1_POS];
+
                                 ImGui::Text(""); ImGui::SameLine(80);
                                 
                                 ImGui::BeginGroup();
                                 ImGui::Text("  1");
                                 string l0 = "##but0" + ofToString(mod);
                                 ImGui::Checkbox(l0.c_str(), &OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B0_POS]);
+//                                ImGui::Checkbox(l0.c_str(), &b[SMSDATA_BUTTON_B0_POS]);
                                 ImGui::EndGroup(); ImGui::SameLine(204);
                                 
                                 ImGui::BeginGroup();
                                 ImGui::Text("  2");
                                 string l1 = "##but1" + ofToString(mod);
                                 ImGui::Checkbox(l1.c_str(), &OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B1_POS]);
+//                                ImGui::Checkbox(l1.c_str(), &b[SMSDATA_BUTTON_B1_POS]);
                                 ImGui::EndGroup();
                             }
                         }
@@ -1375,6 +1376,7 @@ void ofApp::BLEdidDisconnect() {
     NSLog(@"ofApp::BLEdidDisconnect()");
     MEINofxBLE->connectedDevices -= 1;
     MEINofxBLE->oscRunning = false;
+//    oscSenderRunning = false;
 //    OscSenderThread->stop();
 //    bleHidRunning = false;
 }
@@ -1384,6 +1386,9 @@ void ofApp::BLEdidConnect() {
     NSLog(@"ofApp::BLEdidConnect()");
     MEINofxBLE->connectedDevices += 1;
     MEINofxBLE->oscRunning = true;
+    MEINofxBLE->startClock = true;
+//    wordClockBase = ofGetSystemTime();
+//    oscSenderRunning = true;
 //    OscSenderThread->start();
 //    bleHidRunning = true;
 }
