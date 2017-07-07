@@ -176,7 +176,10 @@ bool ofApp::stopOscSender()
 bool doSetTheme = false;
 //--------------------------------------------------------------
 void ofApp::update() {
-    
+    static double pressureOffset = 0.;
+    static double temperatureOffset = 0.;
+    static int airmemsCalibCounter = 0;
+
     if (doSetTheme)
     {
         doSetTheme = false;
@@ -195,9 +198,13 @@ void ofApp::update() {
     
     if(MEINofxBLE->restart)
     {
+        cout << "RESTARTED BLE!!!" << endl;
         OscSenderThread->start();
         wordClockBase = ofGetSystemTime();
         airmemsCalibFlag = true;
+        pressureOffset = 0;
+        temperatureOffset = 0;
+        airmemsCalibCounter = 0;
         MEINofxBLE->restart = false;
     }
     
@@ -211,11 +218,9 @@ void ofApp::update() {
     }
     if (MEINofxBLE->haveAirmemsData())
     {
-        cout << "airmems data... calibflag? " << airmemsCalibFlag << endl;
-        static double pressureOffset = 0.;
-        static double temperatureOffset = 0.;
+//        cout << "airmems data... calibflag? " << airmemsCalibFlag << endl;
+
         if(airmemsCalibFlag) {
-            static int airmemsCalibCounter = 0;
             if(airmemsCalibCounter < SMSDATA_PRESS_CALIB_START) {
 //                airmemsOffset = MEINofxBLE->PressureData();
             }
@@ -1429,7 +1434,7 @@ void ofApp::BLEdidDisconnect() {
 }
 
 //--------------------------------------------------------------
-void ofApp::BLEdidConnect() {
+void ofApp::didBLEConnect() {
     NSLog(@"ofApp::BLEdidConnect()");
     MEINofxBLE->connectedDevices += 1;
     MEINofxBLE->oscRunning = true;

@@ -109,7 +109,7 @@ public:
 	long getWordClock();
 	
 	void BLEdidDisconnect();
-	void BLEdidConnect();
+	void didBLEConnect();
 	void BLEdidRecieveData(unsigned char *data, int length);
 	void BLEdidUpdateRSSI(int rssi);
 
