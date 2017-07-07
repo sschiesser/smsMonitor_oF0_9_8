@@ -250,6 +250,7 @@ void ofApp::update() {
         OscSenderThread->newTemperatureData = true;
         
         displayQuat.set(q[0], q[1], q[2], q[3]);
+//        cout << "displayQuat set @ " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
         
         MEINofxBLE->sethaveahrsDatafalse();
         /*  NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
@@ -271,6 +272,8 @@ void ofApp::draw() {
     
     myCone->rotate(displayQuat);
     myCone->draw();
+    cout << "displayQuat @ "  << displayQuat.x() << " " << displayQuat.y() << "  " <<  displayQuat.z() << " " <<  displayQuat.w() << endl;
+    
 //    ofPushMatrix();
 //    ofTranslate(3*ofGetWidth()/4, ofGetHeight()/2, 40);
 //    ofVec3f axis;
@@ -587,19 +590,6 @@ void ofApp::draw() {
 //                            }
                         }
 
-                        // quat display header
-                        {
-                            ImGuiTreeNodeFlags nodeFlags = 0;
-                            nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
-                            nodeFlags |= ImGuiTreeNodeFlags_CollapsingHeader;
-                            bool showHeader = true;
-                            if(ImGui::CollapsingHeader("Quat", &showHeader, nodeFlags)) {
-//                                ofPushMatrix();
-//                                ofTranslate(ofGetWidth()/2, ofGetHeight()/2, 40);
-//                                ofDrawBox(0, 0, 0, 10, 40, 100);
-//                                ofPopMatrix();
-                            }
-                        }
                         // IMU header
                         {
                             ImGuiTreeNodeFlags nodeFlags = 0;
@@ -1457,16 +1447,16 @@ void ofApp::mouseMoved(int x, int y) {
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button) {
-    ofVec2f mouse(x,y);
-    ofQuaternion yRot((x-lastMouse.x)*dampen, ofVec3f(0,1,0));
-    ofQuaternion xRot((y-lastMouse.y)*dampen, ofVec3f(-1,0,0));
-    displayQuat *= yRot*xRot;
-    lastMouse = mouse;
+//    ofVec2f mouse(x,y);
+//    ofQuaternion yRot((x-lastMouse.x)*dampen, ofVec3f(0,1,0));
+//    ofQuaternion xRot((y-lastMouse.y)*dampen, ofVec3f(-1,0,0));
+//    displayQuat *= yRot*xRot;
+//    lastMouse = mouse;
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button) {
-	lastMouse = ofVec2f(x,y);
+//	lastMouse = ofVec2f(x,y);
 }
 
 //--------------------------------------------------------------
