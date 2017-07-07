@@ -8,7 +8,7 @@
 #endif
 
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
-#define QUAT_LP_FACTOR              (1.0)
+#define QUAT_LP_FACTOR              (0.8)
 
 ofxBLE * MEINofxBLE;
 ofBoxPrimitive* myBox;
@@ -118,7 +118,7 @@ void ofApp::setup() {
     MEINofxBLE = new(ofxBLE);
     MEINofxBLE->connectedDevices = 0;
     MEINofxBLE->oscRunning = false;
-    MEINofxBLE->startClock = false;
+    MEINofxBLE->restart = false;
 }
 
 //--------------------------------------------------------------
@@ -193,11 +193,12 @@ void ofApp::update() {
         OscReceiverThread->haveInput = -1;
     }
     
-    if(MEINofxBLE->startClock)
+    if(MEINofxBLE->restart)
     {
         OscSenderThread->start();
         wordClockBase = ofGetSystemTime();
-        MEINofxBLE->startClock = false;
+        airmemsCalibFlag = true;
+        MEINofxBLE->restart = false;
     }
     
     if (MEINofxBLE->haveButtonData())
@@ -210,19 +211,42 @@ void ofApp::update() {
     }
     if (MEINofxBLE->haveAirmemsData())
     {
-        static long oldPress = 0;
-        long curPress = ofGetElapsedTimeMillis();
-        long deltaPressure = curPress - oldPress;
-        oldPress = curPress;
-//        cout << "deltaPressure: " << deltaPressure << endl;
-        OscSenderThread->sendData[0].delta[SMSDATA_DELTA_PRESS_POS] = deltaPressure;
-        
-        OscSenderThread->sendData[0].pressure = MEINofxBLE->PressureData();
-        OscSenderThread->sendData[0].temperature[0] = MEINofxBLE->TemperatureData();
-        //  NSLog(@"Temp in ofApp: %f", MEINofxBLE->TemperatureData());
-        OscSenderThread->newAirpressureData = true;
-        OscSenderThread->newTemperatureData = true;
-        
+        cout << "airmems data... calibflag? " << airmemsCalibFlag << endl;
+        static double pressureOffset = 0.;
+        static double temperatureOffset = 0.;
+        if(airmemsCalibFlag) {
+            static int airmemsCalibCounter = 0;
+            if(airmemsCalibCounter < SMSDATA_PRESS_CALIB_START) {
+//                airmemsOffset = MEINofxBLE->PressureData();
+            }
+            else {
+                if(airmemsCalibCounter < SMSDATA_PRESS_CALIB_STOP) {
+                    pressureOffset += MEINofxBLE->PressureData();
+                    temperatureOffset += MEINofxBLE->TemperatureData();
+                }
+                if(airmemsCalibCounter >= SMSDATA_PRESS_CALIB_STOP) {
+                    pressureOffset = pressureOffset / SMSDATA_PRESS_CALIB_SAMPLES;
+                    temperatureOffset = temperatureOffset / SMSDATA_PRESS_CALIB_SAMPLES;
+                    airmemsCalibFlag = false;
+                    cout << "pressure offset: " << pressureOffset << ", temp offset: " << temperatureOffset << endl;
+                }
+            }
+            airmemsCalibCounter++;
+        }
+        else {
+            static long oldPress = 0;
+            long curPress = ofGetElapsedTimeMillis();
+            long deltaPressure = curPress - oldPress;
+            oldPress = curPress;
+            //        cout << "deltaPressure: " << deltaPressure << endl;
+            OscSenderThread->sendData[0].delta[SMSDATA_DELTA_PRESS_POS] = deltaPressure;
+            
+            OscSenderThread->sendData[0].pressure = MEINofxBLE->PressureData() - pressureOffset;
+            OscSenderThread->sendData[0].temperature[0] = MEINofxBLE->TemperatureData() - temperatureOffset;
+//            NSLog(@"Temp in ofApp: %f", MEINofxBLE->TemperatureData());
+            OscSenderThread->newAirpressureData = true;
+            OscSenderThread->newTemperatureData = true;
+        }
         MEINofxBLE->sethaveAirmemsDatafalse();
     }
     
@@ -349,7 +373,7 @@ void ofApp::draw() {
                             else {
                                 // if BLE NOT running... START
                                 if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-                                    MEINofxBLE->startClock = true;
+                                    MEINofxBLE->restart = true;
 //                                    startBleHid();
                                     OscSenderThread->start();
                                     oscSenderRunning = true;
@@ -698,13 +722,23 @@ void ofApp::draw() {
                                     ImGui::BeginGroup();
                                     {
                                         ImGui::Text("Pressure:");
-                                        ImGui::Text("%.0f mbar", press);
+                                        if(airmemsCalibFlag) {
+                                            ImGui::Text("CALIB!");
+                                        }
+                                        else {
+                                            ImGui::Text("%.0f mbar",  MEINofxBLE->PressureData());
+                                        }
                                     }
                                     ImGui::EndGroup(); ImGui::SameLine(80);
                                     string id = "##pressSlider" + ofToString(mod);
-                                    ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, 500.0f, 1500.0f, ""); ImGui::SameLine(92);
+                                    ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, -400.0f, 400.0f, ""); ImGui::SameLine(92);
                                     string idPlot = "##pressPlot" + ofToString(mod);
-                                    ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", 500.0f, 1500.0f, ImVec2(252, 80));
+                                    if(airmemsCalibFlag) {
+                                        ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "CALIBRATING!", -400.0f, 400.0f, ImVec2(252, 80));
+                                    }
+                                    else {
+                                        ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", -400.0f, 400.0f, ImVec2(252, 80));
+                                    }
                                 }
                                 ImGui::EndGroup();
                                 
@@ -724,14 +758,25 @@ void ofApp::draw() {
                                     ImGui::BeginGroup();
                                     {
                                         ImGui::Text("Temp.:");
-                                        ImGui::Text("%.2f °C", temp);
-                                        //                                ImGui::Text("%.2f °F", temp*1.8+32);
-                                        
+                                        if(airmemsCalibFlag) {
+                                            ImGui::Text("CALIB!");
+                                        }
+                                        else {
+                                            ImGui::Text("%.1f °C", MEINofxBLE->TemperatureData());
+                                            //                                ImGui::Text("%.2f °F", temp*1.8+32);
+                                        }
                                     }
                                     ImGui::EndGroup(); ImGui::SameLine(80);
-                                    ImVec2(264, 80), &temp;
-                                    string id = "##temp_p" + ofToString(mod);
-                                    ImGui::PlotLines(id.c_str(), tpVals.Data, tpVals.Size, 0, "Temperature (°C)", 18.0f, 35.0f, ImVec2(264, 80));
+                                    string id = "##tempSlider" + ofToString(mod);
+                                    ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &temp, -10.0f, 10.0f, ""); ImGui::SameLine(92);
+//                                    ImVec2(264, 80), &temp;
+                                    string idPlot = "##tempPlot" + ofToString(mod);
+                                    if(airmemsCalibFlag) {
+                                        ImGui::PlotLines(idPlot.c_str(), tpVals.Data, tpVals.Size, 0, "CALIBRATING!", -10.0f, 10.0f, ImVec2(252, 80));
+                                    }
+                                    else {
+                                        ImGui::PlotLines(idPlot.c_str(), tpVals.Data, tpVals.Size, 0, "Temperature (°C)", -10.0f, 10.0f, ImVec2(252, 80));
+                                    }
                                 }
                                 ImGui::EndGroup();
                             }
@@ -1388,7 +1433,7 @@ void ofApp::BLEdidConnect() {
     NSLog(@"ofApp::BLEdidConnect()");
     MEINofxBLE->connectedDevices += 1;
     MEINofxBLE->oscRunning = true;
-    MEINofxBLE->startClock = true;
+    MEINofxBLE->restart = true;
 //    wordClockBase = ofGetSystemTime();
 //    oscSenderRunning = true;
 //    OscSenderThread->start();

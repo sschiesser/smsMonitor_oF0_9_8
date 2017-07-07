@@ -115,7 +115,7 @@ public:
 
 
 	bool newBleValue;
-
+    bool airmemsCalibFlag;
     
 	bool bleHidRunning;
 	// ofxOsc

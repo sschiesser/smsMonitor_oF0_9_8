@@ -28,7 +28,7 @@ void threadedOscSender::setup()
     oscSender[0].setup(oscSenderIp[0], oscSenderPort[0]);
     
 	for (int i = 1; i < OSC_SENDER_MAX; i++) {
-		oscSenderPort[i] = OSC_SENDER_DEFAULT_PORT;
+		oscSenderPort[i] = OSC_SENDER_DEFAULT_PORT+i;
 		oscSenderIp[i] = OSC_SENDER_DEFAULT_IP;
 		oscSenderActive[i] = false;
 		oscSenderMode[i] = OSC_SENDER_MODE_NORMAL;
