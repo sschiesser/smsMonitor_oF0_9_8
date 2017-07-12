@@ -276,7 +276,7 @@ void ofApp::update() {
         OscSenderThread->newIMUData = true;
         OscSenderThread->newTemperatureData = true;
         
-        displayQuat.set(displayQ[0], displayQ[1], displayQ[2], displayQ[3]);
+        displayQuat.set(displayQ[0], displayQ[1], displayQ[3], displayQ[2]);
         
         MEINofxBLE->sethaveahrsDatafalse();
 //        NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);

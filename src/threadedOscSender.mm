@@ -45,8 +45,8 @@ void threadedOscSender::setup()
         
     }
     // set OSC-Adresses:
-    SMS_sensors_button_address[0] = "/sabre/SMS_sensors/buttons/button1";
-    SMS_sensors_button_address[1] = "/sabre/SMS_sensors/buttons/button2";
+    SMS_sensors_button_address = "/sabre/SMS_sensors/buttons";
+   // SMS_sensors_button_address[1] = "/sabre/SMS_sensors/buttons/button2";
     
     SMS_sensors_airmems_pressure_address = "/sabre/SMS_sensors/airpressure";
 
@@ -115,15 +115,16 @@ void threadedOscSender::threadedFunction()
             if (newButtonData){
                 
                 m[0].clear();
-                m[0].setAddress(SMS_sensors_button_address[0]);
+                m[0].setAddress(SMS_sensors_button_address);
                 m[0].addIntArg(sendData[0].button[SMSDATA_BUTTON_B0_POS]);
+                m[0].addIntArg(sendData[0].button[SMSDATA_BUTTON_B1_POS]);
                 oscSender[0].sendMessage( m[0] );
                 
-                m[1].clear();
+               /* m[1].clear();
                 m[1].setAddress(SMS_sensors_button_address[1]);
                 m[1].addIntArg(sendData[0].button[SMSDATA_BUTTON_B1_POS]);
                 oscSender[0].sendMessage( m[1] );
-                
+                */
 //                 NSLog(@"button sent over OSC");
                 newButtonData = false;
                 
@@ -135,10 +136,10 @@ void threadedOscSender::threadedFunction()
                 
                 m[2].clear();
                 m[2].setAddress(SMS_sensors_airmems_pressure_address);
-                m[2].addIntArg(sendData[0].pressure);
+                m[2].addFloatArg(sendData[0].pressure);
                 oscSender[0].sendMessage( m[2] );
                 
-//                NSLog(@"pressure sent over OSC");
+               // NSLog(@"pressure sent over  OSC: %f",sendData[0].pressure);
                 newAirpressureData = false;
             }
             
@@ -157,7 +158,8 @@ void threadedOscSender::threadedFunction()
                 
                 oscSender[0].sendMessage( m[3] );
                     
-//                    NSLog(@"IMU sent over OSC");
+                    NSLog(@"IMU sent over OSC");
+                NSLog(@"quat1: %f",sendData[0].quat[0]);
                     newIMUData = false;
 //                }
             }

@@ -62,7 +62,7 @@ public:
     bool newIMUData;
     bool newTemperatureData;
     
-    string SMS_sensors_button_address[2];
+    string SMS_sensors_button_address;
     
     string SMS_sensors_airmems_pressure_address;
     
