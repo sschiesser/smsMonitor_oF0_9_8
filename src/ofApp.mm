@@ -273,6 +273,33 @@ void ofApp::update() {
             displayQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
             oldQ[i] = newQ[i];
         }
+        // ahrs to pitch roll yaw
+        float pitch;
+        float roll;
+        float yaw;
+        
+        /*
+        float angle_rad = acos(newQ[0]) * 2;
+        pitch = newQ[1] / sin(angle_rad/2);
+        roll = newQ[2] / sin(angle_rad/2);
+        yaw = newQ[3] / sin(angle_rad/2);
+        */
+        
+        roll = atan2(2*(newQ[0]*newQ[1] + newQ[2]*newQ[3]) , 1 - 2 * (pow(newQ[1],2) + pow(newQ[2],2)));
+        
+        pitch = asin(2*(newQ[0]*newQ[2] - newQ[3]*newQ[1]));
+        
+        yaw = atan2(2*(newQ[0]*newQ[3] + newQ[1]*newQ[2]) , 1 - 2 * (pow(newQ[2],2)) + pow(newQ[3],2));
+        
+        NSLog(@"pitch: %f:", pitch);
+        NSLog(@"roll: %f:", roll);
+        NSLog(@"yaw: %f:", yaw);
+        
+
+        
+        
+        
+        
         OscSenderThread->newIMUData = true;
         OscSenderThread->newTemperatureData = true;
         

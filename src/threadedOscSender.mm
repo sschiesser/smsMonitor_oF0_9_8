@@ -158,8 +158,8 @@ void threadedOscSender::threadedFunction()
                 
                 oscSender[0].sendMessage( m[3] );
                     
-                    NSLog(@"IMU sent over OSC");
-                NSLog(@"quat1: %f",sendData[0].quat[0]);
+                //    NSLog(@"IMU sent over OSC");
+                //NSLog(@"quat1: %f",sendData[0].quat[0]);
                     newIMUData = false;
 //                }
             }
