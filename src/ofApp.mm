@@ -285,16 +285,16 @@ void ofApp::update() {
         yaw = newQ[3] / sin(angle_rad/2);
         */
         
-        roll = atan2(2*(newQ[0]*newQ[1] + newQ[2]*newQ[3]) , 1 - 2 * (pow(newQ[1],2) + pow(newQ[2],2)));
+        roll = atan2(2*(displayQ[0]*displayQ[1] + displayQ[2]*displayQ[3]) , 1 - 2 * (pow(displayQ[1],2) + pow(displayQ[2],2)));
         
-        pitch = asin(2*(newQ[0]*newQ[2] - newQ[3]*newQ[1]));
+        pitch = asin(2*(displayQ[0]*displayQ[2] - displayQ[3]*displayQ[1]));
         
-        yaw = atan2(2*(newQ[0]*newQ[3] + newQ[1]*newQ[2]) , 1 - 2 * (pow(newQ[2],2)) + pow(newQ[3],2));
+        yaw = atan2(2*(displayQ[0]*displayQ[3] + displayQ[1]*displayQ[2]) , 1 - 2 * (pow(displayQ[2],2)) + pow(displayQ[3],2));
         
-        NSLog(@"pitch: %f:", pitch);
+      /*  NSLog(@"pitch: %f:", pitch);
         NSLog(@"roll: %f:", roll);
         NSLog(@"yaw: %f:", yaw);
-        
+       */ 
 
         
         
@@ -337,6 +337,16 @@ void ofApp::draw() {
         myCone->setOrientation(displayQuat);
         myCone->draw();
 //        cout << "displayQuat @ "  << displayQuat.x() << " " << displayQuat.y() << "  " <<  displayQuat.z() << " " <<  displayQuat.w() << endl;
+       // ofVec3f(EulerAngles);
+        
+        EulerAngles = myCone->getOrientationEuler();
+        
+        EulerX_roll = EulerAngles.x;
+        EulerY_yaw = EulerAngles.y;
+        EulerZ_pitch = EulerAngles.z;
+        
+        NSLog(@"EulerAngles x: %f y: %f z: %f",EulerX_roll, EulerY_yaw, EulerZ_pitch);
+        
     }
     
     gui.begin();

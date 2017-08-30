@@ -130,6 +130,11 @@ public:
 	
     ofQuaternion displayQuat;
     
+    ofVec3f  EulerAngles;
+    float EulerX_roll;
+    float EulerY_yaw;
+    float EulerZ_pitch;
+    
 	long wordClockBase;
 	
 	// ofxImGui
