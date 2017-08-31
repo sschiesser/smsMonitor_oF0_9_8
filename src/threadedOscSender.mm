@@ -51,6 +51,7 @@ void threadedOscSender::setup()
     SMS_sensors_airmems_pressure_address = "/sabre/SMS_sensors/airpressure";
 
     SMS_sensors_IMU_quat_address = "/sabre/SMS_sensors/motion/quat";
+    SMS_sensors_IMU_euler_address = "/sabre/SMS_sensors/motion/euler";
 
     SMS_sensors_airmems_temperature_address = "/sabre/SMS_sensors/temperature/breath";
     SMS_sensors_IMU_temperature_address = "/sabre/SMS_sensors/temperature/room";
@@ -157,7 +158,14 @@ void threadedOscSender::threadedFunction()
                 m[3].addFloatArg(sendData[0].quat[3]);
                 
                 oscSender[0].sendMessage( m[3] );
-                    
+                
+                
+                m[4].clear();
+                m[4].setAddress(SMS_sensors_IMU_euler_address);
+                m[4].addFloatArg(sendData[0].euler[0]);
+                m[4].addFloatArg(sendData[0].euler[1]);
+                m[4].addFloatArg(sendData[0].euler[2]);
+                oscSender[0].sendMessage( m[4] );
                 //    NSLog(@"IMU sent over OSC");
                 //NSLog(@"quat1: %f",sendData[0].quat[0]);
                     newIMUData = false;

@@ -138,4 +138,5 @@ struct smsData
 	double joystick[2];
 	double ahrs[3];
     double quat[4];
+    double euler[3];
 };

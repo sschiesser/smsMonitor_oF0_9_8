@@ -67,6 +67,7 @@ public:
     string SMS_sensors_airmems_pressure_address;
     
     string SMS_sensors_IMU_quat_address;
+    string SMS_sensors_IMU_euler_address;
     
     string SMS_sensors_airmems_temperature_address;
     string SMS_sensors_IMU_temperature_address;

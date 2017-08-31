@@ -273,17 +273,18 @@ void ofApp::update() {
             displayQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
             oldQ[i] = newQ[i];
         }
+        /*
+        for (int i = 0 ; i < 3 ; i++){
+            OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
+        }*/
+        
         // ahrs to pitch roll yaw
+        /*
         float pitch;
         float roll;
         float yaw;
         
-        /*
-        float angle_rad = acos(newQ[0]) * 2;
-        pitch = newQ[1] / sin(angle_rad/2);
-        roll = newQ[2] / sin(angle_rad/2);
-        yaw = newQ[3] / sin(angle_rad/2);
-        */
+        
         
         roll = atan2(2*(displayQ[0]*displayQ[1] + displayQ[2]*displayQ[3]) , 1 - 2 * (pow(displayQ[1],2) + pow(displayQ[2],2)));
         
@@ -291,7 +292,7 @@ void ofApp::update() {
         
         yaw = atan2(2*(displayQ[0]*displayQ[3] + displayQ[1]*displayQ[2]) , 1 - 2 * (pow(displayQ[2],2)) + pow(displayQ[3],2));
         
-      /*  NSLog(@"pitch: %f:", pitch);
+        NSLog(@"pitch: %f:", pitch);
         NSLog(@"roll: %f:", roll);
         NSLog(@"yaw: %f:", yaw);
        */ 
@@ -667,6 +668,26 @@ void ofApp::draw() {
                                     ahrsPlot[i][ahrsPlotOffset[i]] = ahrs[i];
                                     ahrsPlotOffset[i] = (ahrsPlotOffset[i] + 1) % ahrsPlot[i].Size;
                                 }
+                                
+                            
+                                static ImVector<float> EulerPlot[3];
+                                static int EulerPlotOffset[3] = {0, 0, 0};
+                                EulerPRY[0] = EulerZ_pitch;
+                                EulerPRY[1] = EulerX_roll;
+                                EulerPRY[2] = EulerY_yaw;
+                                
+                                for (int i = 0; i < 3; i++) {
+                                    if (EulerPlot[i].empty()) {
+                                        EulerPlot[i].resize(50);
+                                        memset(EulerPlot[i].Data, 0, EulerPlot[i].Size * sizeof(float));
+                                    }
+                                    EulerPlot[i][EulerPlotOffset[i]] = EulerPRY[i];
+                                    EulerPlotOffset[i] = (EulerPlotOffset[i] + 1) % EulerPlot[i].Size;
+                                }
+
+                                
+                                
+                                
                                 // Q1
                                 {
                                     ImGui::Text("quat1:"); ImGui::SameLine(56);
@@ -708,6 +729,42 @@ void ofApp::draw() {
                                     ImGui::PopItemWidth();
                                 }
                                 
+                                //space
+                                {
+                                    ImGui::Spacing();
+                                    ImGui::Spacing();
+
+                                }
+                                //pitch
+                                {
+                                    ImGui::Text("pitch:"); ImGui::SameLine(56);
+                                    ImGui::PushItemWidth(140);
+                                    string id = "##Pitch" + ofToString(mod);
+                                    ImGui::SliderFloat(id.c_str(), &EulerPRY[0], -90.0f, 90.0f); ImGui::SameLine(204);
+                                    string idPlot = "##EulerPitchPlot" + ofToString(mod);
+                                    ImGui::PlotLines(idPlot.c_str(), EulerPlot[0].Data, EulerPlot[0].Size, 0, "", -90.0f, 90.0f, ImVec2(0, 20));
+                                    ImGui::PopItemWidth();
+                                }
+                                //roll
+                                {
+                                    ImGui::Text("roll:"); ImGui::SameLine(56);
+                                    ImGui::PushItemWidth(140);
+                                    string id = "##Roll" + ofToString(mod);
+                                    ImGui::SliderFloat(id.c_str(), &EulerPRY[1], -180.0f, 180.0f); ImGui::SameLine(204);
+                                    string idPlot = "##EulerRollPlot" + ofToString(mod);
+                                    ImGui::PlotLines(idPlot.c_str(), EulerPlot[1].Data, EulerPlot[1].Size, 0, "", -180.0f, 180.0f, ImVec2(0, 20));
+                                    ImGui::PopItemWidth();
+                                }
+                                //yaw
+                                {
+                                    ImGui::Text("yaw:"); ImGui::SameLine(56);
+                                    ImGui::PushItemWidth(140);
+                                    string id = "##Yaw" + ofToString(mod);
+                                    ImGui::SliderFloat(id.c_str(), &EulerPRY[2], -180.0, 180.0f); ImGui::SameLine(204);
+                                    string idPlot = "##EulerYawPlot" + ofToString(mod);
+                                    ImGui::PlotLines(idPlot.c_str(), EulerPlot[2].Data, EulerPlot[2].Size, 0, "", -180.0f, 180.0f, ImVec2(0, 20));
+                                    ImGui::PopItemWidth();
+                                }
                                 
                             }
                         }

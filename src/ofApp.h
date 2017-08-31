@@ -131,6 +131,9 @@ public:
     ofQuaternion displayQuat;
     
     ofVec3f  EulerAngles;
+    
+    float EulerPRY[3];
+    
     float EulerX_roll;
     float EulerY_yaw;
     float EulerZ_pitch;
