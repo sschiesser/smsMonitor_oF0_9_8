@@ -109,6 +109,7 @@ public:
 	long getWordClock();
 	
 	void BLEdidDisconnect();
+<<<<<<< HEAD
 	void didBLEConnect();
 	void BLEdidRecieveData(unsigned char *data, int length);
 	void BLEdidUpdateRSSI(int rssi);
@@ -116,6 +117,22 @@ public:
 
 	bool newBleValue;
     bool airmemsCalibFlag;
+=======
+	void BLEdidConnect();
+	void BLEdidRecieveData(unsigned char *data, int length);
+	void BLEdidUpdateRSSI(int rssi);
+	
+//    ofxBLE * MEINofxBLE;
+
+	// rawHid
+//	threadedHidReceiver * RawHidThread;
+//	bool hidReceiverRunning;
+	bool newBleValue;
+	// BLE
+#ifdef _WIN32
+	threadedBleReceiver * BleHidThread;
+#endif
+>>>>>>> ofxBle_Win
     
 	bool bleHidRunning;
 	// ofxOsc
@@ -128,6 +145,7 @@ public:
 	
 	ofTrueTypeFont font;
 	
+<<<<<<< HEAD
     ofQuaternion displayQuat;
     
     ofVec3f  EulerAngles;
@@ -138,6 +156,8 @@ public:
     float EulerY_yaw;
     float EulerZ_pitch;
     
+=======
+>>>>>>> ofxBle_Win
 	long wordClockBase;
 	
 	// ofxImGui
@@ -153,6 +173,15 @@ public:
 	bool show_another_window;
 	
 	float floatValue;
+<<<<<<< HEAD
+=======
+//	ofImage imageButtonSource;
+//	GLuint imageButtonID;
+//	ofPixels pixelsButtonSource;
+//	GLuint pixelsButtonID;
+//	ofTexture textureSource;
+//	GLuint textureSourceID;
+>>>>>>> ofxBle_Win
     
     ofImage startOSCButtonSource;
     GLuint startOSCButtonID;
@@ -164,6 +193,7 @@ public:
     GLuint remoteButtonID;
     ofImage searchBLEButtonSource;
     GLuint searchBLEButtonID;
+<<<<<<< HEAD
     ofImage searchDisabledButtonSource;
     GLuint searchDisabledID;
     ofImage searchingBLEButtonSource;
@@ -172,4 +202,12 @@ public:
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
     int guiFramerate;
+=======
+    ofImage searchingBLEButtonSource;
+    GLuint searchingBLEButtonID;
+	
+	struct guiModules activeMods;
+	struct dataRefresh redraw[SMS_MAX_PERIPH];
+    
+>>>>>>> ofxBle_Win
 };

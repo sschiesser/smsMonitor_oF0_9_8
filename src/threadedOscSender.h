@@ -62,12 +62,20 @@ public:
     bool newIMUData;
     bool newTemperatureData;
     
+<<<<<<< HEAD
     string SMS_sensors_button_address;
     
     string SMS_sensors_airmems_pressure_address;
     
     string SMS_sensors_IMU_quat_address;
     string SMS_sensors_IMU_euler_address;
+=======
+    string SMS_sensors_button_address[2];
+    
+    string SMS_sensors_airmems_pressure_address;
+    
+    string SMS_sensors_IMU_ahrs_quat[4];
+>>>>>>> ofxBle_Win
     
     string SMS_sensors_airmems_temperature_address;
     string SMS_sensors_IMU_temperature_address;

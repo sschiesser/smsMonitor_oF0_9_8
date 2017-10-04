@@ -115,10 +115,13 @@ struct bleMpuData
 #define SMSDATA_AHRS_Q2_POS             1
 #define SMSDATA_AHRS_Q3_POS             2
 #define SMSDATA_AHRS_Q4_POS             3
+<<<<<<< HEAD
 
 #define SMSDATA_PRESS_CALIB_START           10
 #define SMSDATA_PRESS_CALIB_SAMPLES        100
 #define SMSDATA_PRESS_CALIB_STOP            (SMSDATA_PRESS_CALIB_START + SMSDATA_PRESS_CALIB_SAMPLES)
+=======
+>>>>>>> ofxBle_Win
 
 struct smsData
 {
@@ -138,5 +141,8 @@ struct smsData
 	double joystick[2];
 	double ahrs[3];
     double quat[4];
+<<<<<<< HEAD
     double euler[3];
+=======
+>>>>>>> ofxBle_Win
 };
