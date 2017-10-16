@@ -81,6 +81,7 @@ public:
 	void update();
 	void draw();
 	
+    void updateDevices();
 	void getBLEDeviceList();
 	
 	bool startBleHid();
@@ -172,4 +173,6 @@ public:
 	struct guiModules activeMods;
 	struct dataRefresh redraw[SMS_MAX_PERIPH];
     int guiFramerate;
+    
+    
 };

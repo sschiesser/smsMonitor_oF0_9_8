@@ -2,6 +2,7 @@
 #include "smsGui.h"
 
 #include "ofxBLE.h"
+#include "BluetoothHelper.h"
 
 #ifdef _WIN32
 #include "combaseapi.h"
@@ -13,6 +14,8 @@
 ofxBLE * MEINofxBLE;
 ofBoxPrimitive* myBox;
 ofConePrimitive* myCone;
+bool showDeviceList = false;
+BluetoothHelper *myBluetoothHelper;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -431,7 +434,9 @@ void ofApp::draw() {
                                         OscSenderThread->resetValues();
                                         //=================*DeviceList*=========================
                                         NSLog(@"looking for devices!");
-                                        MEINofxBLE->ofxBLE::scanPeripherals();
+                                        //MEINofxBLE->ofxBLE::scanPeripherals(nil,nil);
+                                        myBluetoothHelper->BluetoothHelper::searchForDevices(MEINofxBLE);
+                                        showDeviceList = true;
                                     }
                                 }
                                 else {
@@ -442,6 +447,8 @@ void ofApp::draw() {
                                 ImGui::ImageButton((ImTextureID)(uintptr_t)searchDisabledID, ImVec2(72, 16), ImVec2(0, 0), ImVec2(1, 1), 0);
                             }
                         }
+                        const char* strs[1024] = {0};
+                        
                         ImGui::EndGroup();
 //                        ImGui::PopFont();
                     }
@@ -450,6 +457,19 @@ void ofApp::draw() {
             }
             ImGui::End();
             
+            // Device List
+            if(showDeviceList)
+            {
+                ImGui::BeginGroup();
+                ImGui::Text("Device list:");
+                
+                const char* listbox_items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
+                static int listbox_item_current = 1;
+                ImGui::ListBox("listbox\n(single select)", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 9);
+                
+                ImGui::EndGroup();
+                
+            }
             // module windows
             for (int mod = 0; mod < SMS_MAX_PERIPH; mod++) {
                 if (activeMods.sensors[mod])
@@ -471,6 +491,7 @@ void ofApp::draw() {
                     string modLabel = "sensors#" + ofToString(mod + 1);
                     
                     ImGui::Begin(modLabel.c_str(), &showWindow, winFlagsMod);
+
                     {
                         // Link quality & battery level (non-collapsable)
                         {
@@ -1462,6 +1483,10 @@ void ofApp::calcDelta(int p)
             OscSenderThread->sendData[p].delta[SMSDATA_DELTA_COMP_POS] = OscReceiverThread->rcvMpu[p].curTs[MPUDATA_TS_COMP_POS] - OscReceiverThread->rcvMpu[p].oldTs[MPUDATA_TS_COMP_POS];
         }
     }
+}
+
+void ofApp::updateDevices(){
+    NSLog(@"update Devices");
 }
 
 //--------------------------------------------------------------
