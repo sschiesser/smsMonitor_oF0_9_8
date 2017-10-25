@@ -1,0 +1,7 @@
+Resolve resolution issue
+In BluetoothHelper::loadDevices check if devices with identifier == null are found. (Do these devices have to be added to the ui list as well?
+Decouple objective C code from ofApp and make ofApp a C++ class again
+Implement disconnection function
+make UI beautiful
+resolve error: can't export app and then open it from desktop. (can't load file assertion fails in imgui_draw.cpp line 1196)
+

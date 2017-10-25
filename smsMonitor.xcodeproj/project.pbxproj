@@ -138,6 +138,7 @@
 		D862C43C8AA05B52448C98F6 /* threadedOscReceiver.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = threadedOscReceiver.mm; path = src/threadedOscReceiver.mm; sourceTree = SOURCE_ROOT; };
 		D91100C1FBA245AD6CB55BD3 /* ofxImGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxImGui.h; path = ../../../addons/ofxImGui/src/ofxImGui.h; sourceTree = SOURCE_ROOT; };
 		D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscTypes.cpp; path = ../../../addons/ofxOsc/libs/oscpack/src/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
+		DE525B311FA087CC000395D5 /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		DEAB007D1F92884300F06676 /* BluetoothHelper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BluetoothHelper.mm; sourceTree = "<group>"; };
 		DEAB007E1F92884300F06676 /* BluetoothHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
 		DF49D76C45D5DB505A234880 /* ofxOscMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscMessage.cpp; path = ../../../addons/ofxOsc/src/ofxOscMessage.cpp; sourceTree = SOURCE_ROOT; };
@@ -417,6 +418,7 @@
 				F4A8929C76DDDA75F9DCBDDF /* threadedOscSender.h */,
 				DEAB007E1F92884300F06676 /* BluetoothHelper.h */,
 				DEAB007D1F92884300F06676 /* BluetoothHelper.mm */,
+				DE525B311FA087CC000395D5 /* TODO */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
