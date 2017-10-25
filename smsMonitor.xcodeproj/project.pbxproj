@@ -415,8 +415,8 @@
 				64E0899B259C4035D2BD2CB1 /* threadedOscReceiver.h */,
 				CBBF28FB57229BF536C53E78 /* threadedOscSender.mm */,
 				F4A8929C76DDDA75F9DCBDDF /* threadedOscSender.h */,
-				DEAB007D1F92884300F06676 /* BluetoothHelper.mm */,
 				DEAB007E1F92884300F06676 /* BluetoothHelper.h */,
+				DEAB007D1F92884300F06676 /* BluetoothHelper.mm */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

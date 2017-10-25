@@ -11,11 +11,14 @@
 #define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
 #define QUAT_LP_FACTOR              (0.8)
 
+BluetoothHelper * myBluetoothHelper;
 ofxBLE * MEINofxBLE;
 ofBoxPrimitive* myBox;
 ofConePrimitive* myCone;
 bool showDeviceList = false;
-BluetoothHelper *myBluetoothHelper;
+vector<bluetoothDevice> *devices;
+
+
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -122,6 +125,19 @@ void ofApp::setup() {
     MEINofxBLE->connectedDevices = 0;
     MEINofxBLE->oscRunning = false;
     MEINofxBLE->restart = false;
+    
+    myBluetoothHelper = new(BluetoothHelper);
+    myBluetoothHelper->BluetoothHelper::setofxBLE(MEINofxBLE);
+    devices = new(vector<bluetoothDevice>);
+}
+
+bool VectorOfStringGetter(void* vec, int idx, const char** out_text)
+{
+    auto& vector = *static_cast<std::vector<bluetoothDevice>*>(vec);
+    if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+    *out_text = vector.at(idx).name.c_str();
+    return true;
+    
 }
 
 //--------------------------------------------------------------
@@ -357,6 +373,8 @@ void ofApp::draw() {
     {
         // Main window
         {
+            //ImGui::SetNextWindowSize(ImVec2(500, 500));
+
             ImGui::SetNextWindowSize(ImVec2(ofGetWidth(), GUI_HEADER_HEIGHT));
             ImGui::SetNextWindowPos(ImVec2(0, 0));
             ImGuiWindowFlags winFlagsMain = 0;
@@ -435,7 +453,9 @@ void ofApp::draw() {
                                         //=================*DeviceList*=========================
                                         NSLog(@"looking for devices!");
                                         //MEINofxBLE->ofxBLE::scanPeripherals(nil,nil);
-                                        myBluetoothHelper->BluetoothHelper::searchForDevices(MEINofxBLE);
+                                                                                
+                                        devices->clear();
+                                        myBluetoothHelper->BluetoothHelper::searchForDevices(devices);
                                         showDeviceList = true;
                                     }
                                 }
@@ -462,12 +482,28 @@ void ofApp::draw() {
             {
                 ImGui::BeginGroup();
                 ImGui::Text("Device list:");
-                
-                const char* listbox_items[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon" };
-                static int listbox_item_current = 1;
-                ImGui::ListBox("listbox\n(single select)", &listbox_item_current, listbox_items, IM_ARRAYSIZE(listbox_items), 9);
-                
+
+                bool (*bla)(void*, int, const char**) = &VectorOfStringGetter;
+                const char** out_text;
+                static int listbox_item_current = 0;
+                ImGui::ListBox("", &listbox_item_current, bla, static_cast<void*>(devices), devices->size());
                 ImGui::EndGroup();
+                
+                ImGui::BeginGroup();
+                if(!MEINofxBLE->isSearching()) {
+
+                    if (ImGui::Button("Connect")) {
+
+                        myBluetoothHelper->BluetoothHelper::connectWithDevice(listbox_item_current);
+                        showDeviceList = false;
+                    }
+                }
+                else{
+                    ImGui::Button("Searching...");
+                    
+                }
+                ImGui::EndGroup();
+
                 
             }
             // module windows
@@ -1373,6 +1409,9 @@ void ofApp::draw() {
     */
 
 }
+
+
+
 
 //--------------------------------------------------------------
 void ofApp::remapData(int p)

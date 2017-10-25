@@ -16,7 +16,10 @@
 
 class BluetoothHelper{
 public:
-    void searchForDevices(ofxBLE *myofxBLE);
-    //void deviceListChanged(void* data);
+    void searchForDevices(vector<bluetoothDevice>* result);
+    void setofxBLE(ofxBLE *myofxBLE1);
+    void connectWithDevice(int deviceAtPosition);
+    void disconnect();
 private:
+    void loadDevices(vector<bluetoothDevice>* result);
 };

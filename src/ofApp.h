@@ -74,6 +74,11 @@ struct dataRefresh {
 	bool delta[3];
 };
 
+struct bluetoothDevice{
+    string name;
+    string uuid;
+};
+
 class ofApp : public ofBaseApp{
 	
 public:
