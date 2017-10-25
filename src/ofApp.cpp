@@ -482,12 +482,11 @@ void ofApp::draw() {
             }
             ImGui::End();
             
-            // Device List
             if(showDeviceList)
             {
                 ImGui::BeginGroup();
                 ImGui::Text("Device list:");
-
+                
                 bool (*bla)(void*, int, const char**) = &VectorOfStringGetter;
                 const char** out_text;
                 static int listbox_item_current = 0;
@@ -496,13 +495,13 @@ void ofApp::draw() {
                 
                 ImGui::BeginGroup();
                 if(!MEINofxBLE->isSearching()) {
-
+                    
                     if (ImGui::Button("Connect")) {
-
+                        
                         if(!devices->empty()){
-                        myBluetoothHelper->BluetoothHelper::connectWithDevice(listbox_item_current);
+                            myBluetoothHelper->BluetoothHelper::connectWithDevice(listbox_item_current);
                             
-                        showDeviceList = false;
+                            showDeviceList = true;
                         }
                     }
                 }
@@ -511,11 +510,14 @@ void ofApp::draw() {
                     
                 }
                 ImGui::EndGroup();
-
                 
             }
+
             // module windows
             for (int mod = 0; mod < SMS_MAX_PERIPH; mod++) {
+                // Device List
+                
+
                 if (activeMods.sensors[mod])
                 {
                     // General window settings
@@ -524,7 +526,7 @@ void ofApp::draw() {
                     moduleWindowSize.x = GUI_MOD_SENSORS_WIDTH;
                     moduleWindowSize.y = GUI_MOD_SENSORS_HEIGHT;
                     moduleWindowPos.x = GUI_MOD_SENSORS_POS_X0 + (mod * GUI_MOD_SENSORS_WIDTH);
-                    moduleWindowPos.y = GUI_MOD_SENSORS_POS_Y;
+                    moduleWindowPos.y = GUI_MOD_SENSORS_POS_Y+ 200;
                     ImGui::SetNextWindowSize(moduleWindowSize);
                     ImGui::SetNextWindowPos(moduleWindowPos);
                     ImGuiWindowFlags winFlagsMod = 0;
@@ -862,6 +864,38 @@ void ofApp::draw() {
                                 ImGui::EndGroup();
                             }
                         }
+                        
+                        // Remote header
+                        {
+                            ImGuiTreeNodeFlags nodeFlags = 0;
+                            nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+                            nodeFlags |= ImGuiTreeNodeFlags_CollapsingHeader;
+                            bool showHeader = true;
+                            if (ImGui::CollapsingHeader("Remote", &showHeader, nodeFlags)) {
+                                //                                bool b[2] = {0};
+                                //                                b[SMSDATA_BUTTON_B0_POS] = OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B0_POS];
+                                //                                b[SMSDATA_BUTTON_B1_POS] = OscSenderThread->sendData[mod].button[SMSDATA_BUTTON_B1_POS];
+                                
+                                ImGui::Text(""); ImGui::SameLine(80);
+                                
+                                ImGui::BeginGroup();
+                                ImGui::Text("  1");
+                                string l0 = "##but0" + ofToString(mod);
+                                bool b1 = myBluetoothHelper->BluetoothHelper::getButton1DataRemote();
+                                ImGui::Checkbox(l0.c_str(), &b1);
+                                //                                ImGui::Checkbox(l0.c_str(), &b[SMSDATA_BUTTON_B0_POS]);
+                                ImGui::EndGroup(); ImGui::SameLine(204);
+                                
+                                ImGui::BeginGroup();
+                                ImGui::Text("  2");
+                                string l1 = "##but1" + ofToString(mod);
+                                bool b2 = myBluetoothHelper->BluetoothHelper::getButton2DataRemote();
+                                ImGui::Checkbox(l1.c_str(), &b2);
+                                //                                ImGui::Checkbox(l1.c_str(), &b[SMSDATA_BUTTON_B1_POS]);
+                                ImGui::EndGroup();
+                            }
+                        }
+
                         
                         // Pressure header
                         {

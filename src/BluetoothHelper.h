@@ -28,7 +28,10 @@ public:
     void disconnect();
     void calibrate();
     double getBatteryLevel();
+    bool getButton1DataRemote();
+    bool getButton2DataRemote();
 private:
     void loadDevices(vector<bluetoothDevice>* result);
     void getData(sensorData* s);
+    
 };

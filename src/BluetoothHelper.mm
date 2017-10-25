@@ -62,7 +62,7 @@ void BluetoothHelper::disconnect(){
 }
 
 void BluetoothHelper::calibrate(){
-    
+    myofxBLE->ofxBLE::calibrate();
 }
 
 
@@ -71,5 +71,13 @@ void BluetoothHelper::calibrate(){
 double BluetoothHelper::getBatteryLevel(){
     return myofxBLE->ofxBLE::BatteryLevel();
 }
+
+bool BluetoothHelper::getButton1DataRemote(){
+    return myofxBLE->ofxBLE::Button1DataRemote();
+}
+bool BluetoothHelper::getButton2DataRemote(){
+    return myofxBLE->ofxBLE::Button2DataRemote();
+}
+
 
 

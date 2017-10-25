@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include "ofApp.h"
+#include "ofApp.hpp"
 #include "BLE.h"
 
 #include "ofMain.h"
+
 
 class ofApp;
 
@@ -32,6 +33,7 @@ protected:
     ofxBLEDelegate *dongle;
 
 public:
+    //ofApp *myOfApp;
     //constructor
     ofxBLE();
     //destructor
@@ -65,12 +67,16 @@ public:
     void sethaveButtonDatafalse();
     bool Button1Data();
     bool Button2Data();
+    bool Button1DataRemote();
+    bool Button2DataRemote();
 
+    double BatteryLevel();
     bool haveAirmemsDataFlag;
     bool haveAirmemsData();
     void sethaveAirmemsDatafalse();
     double PressureData();
     double TemperatureData();
+    void calibrate();
     //double getPressureData;
     //double getTemperatureData;
 
@@ -95,7 +101,8 @@ public:
 
     
     NSData *ButtonData();
-    
+    NSMutableArray* getPeripherals();
+    void connectWithPeripheral(int index);
 
     
 };

@@ -5,7 +5,6 @@
 //
 
 #import "ofxBLE.h"
-#import "BLE.h"
 #import "Cocoa/Cocoa.h"
 // Objective C class implementations
 
@@ -24,12 +23,14 @@ bool haveButtonDataFlag;
 bool haveahrsDataFlag;
 bool haveAirmemsDataFlag;
 
+bool Button1Remote = 0,Button2Remote = 0;
 
 bool Button1 = 0,Button2 = 0;
 float Pressure;
 float Temperature;
 float ahrs[4];
 int ahrsIndex;
+double batteryLevel;
 
 /*
 - (id)initWithStyle:(UITableViewStyle)style
@@ -51,6 +52,7 @@ int ahrsIndex;
 //    }
 //    return self;
 //}
+
 
 - (void)viewDidLoad
 {
@@ -136,17 +138,49 @@ int ahrsIndex;
 //    [indConnecting startAnimating];
 }
 
+
+-(void) calibrate
+{
+    //const unsigned char bytes[] = {0x1c,0x57,0xca,0x1b};
+
+    const unsigned char bytes[] = {0x1b,0xca,0x57,0x1c};
+    NSData *data = [NSData dataWithBytes:bytes length:sizeof(bytes)];
+    NSLog(@"%@", data);
+
+    
+    [ble writeCalibrate:data];
+}
+
 -(void) bleDidReceiveButtonData: (const uint8_t * ) data
 {
-    if(Button2 != data[0]){
-        
         Button2 = data[0];
-    }
     
-    if(Button1 != data[1]){
         Button1 = data[1];
-    }
+    
+    /*
+    mySensorData->button1 = data[0];
+    mySensorData->button2 = data[1];
+    */
     haveButtonDataFlag = true;
+}
+
+-(void) bleDidReceiveButtonDataRemote: (const uint8_t * ) data
+{
+    Button2Remote = data[0];
+    
+    Button1Remote = data[1];
+    
+}
+
+-(void) bleDidReceiveBatteryLevel:(const uint8_t *)data
+{
+    batteryLevel = data[0];
+    batteryLevel = batteryLevel / 100.0;
+}
+
+-(double) getBatteryLevel
+{
+    return batteryLevel;
 }
 
 -(bool)getButton1Data
@@ -157,6 +191,18 @@ int ahrsIndex;
 {
     return Button2;
 }
+
+-(bool)getButton2DataRemote
+{
+    return Button2Remote;
+}
+
+-(bool)getButton1DataRemote
+{
+    return Button1Remote;
+}
+
+
 -(bool)gethaveButtonDataFlag
 {
     return haveButtonDataFlag;
@@ -340,6 +386,8 @@ int ahrsIndex;
     [ble write:data];
 }
 */
+
+
 @end
 
 
@@ -347,6 +395,8 @@ int ahrsIndex;
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 //= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 //                                          C++ class implementation
+
+
 
 ofxBLE::ofxBLE(){
     
@@ -359,17 +409,36 @@ ofxBLE::~ofxBLE(){
 
 }
 
+/*
+void ofxBLE::setDataStruct(sensorData * s){
+    mySensorData = s;
+}
+*/
 void ofxBLE::update(){
     
 
 }
 
+NSMutableArray* ofxBLE::getPeripherals(){
+    return dongle.ble.peripherals;
+}
+
+
+void ofxBLE::connectWithPeripheral(int index){
+
+    [dongle.ble connectPeripheral:[dongle.ble.peripherals objectAtIndex:index]];
+}
+
+
+
 
 void ofxBLE::scanPeripherals(){
     NSLog(@"*scanPeripherals*");
-    [dongle btnScanForPeripherals];
     
+    [dongle btnScanForPeripherals];
 }
+
+
 
 /*void ofxBLE::sendDigitalOut(bool bState){
     //[dongle sendDigitalOut:0];
@@ -448,13 +517,22 @@ bool ofxBLE::haveButtonData(){
 void ofxBLE::sethaveButtonDatafalse(){
     [dongle sethaveButtonDatafalse];
 }
-
+double ofxBLE::BatteryLevel(){
+    return [dongle getBatteryLevel];
+}
 bool ofxBLE::Button1Data(){
     return [dongle getButton1Data];
 }
 bool ofxBLE::Button2Data(){
     return [dongle getButton2Data];
 }
+bool ofxBLE::Button2DataRemote(){
+    return [dongle getButton2DataRemote];
+}
+bool ofxBLE::Button1DataRemote(){
+    return [dongle getButton1DataRemote];
+}
+
 bool ofxBLE::haveAirmemsData(){
     return  [dongle gethaveAirmemsDataFlag];
 }
@@ -474,6 +552,11 @@ bool ofxBLE::haveahrsData(){
 void ofxBLE::sethaveahrsDatafalse(){
     [dongle sethaveahrsDatafalse];
 }
+
+void ofxBLE::calibrate(){
+    [dongle calibrate];
+}
+
 
 double ofxBLE::ahrsData(int i){
    // NSLog(@"ahrsIndex: %i", ahrsIndex);

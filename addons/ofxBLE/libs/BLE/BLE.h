@@ -27,7 +27,8 @@
 -(void) bleDidReceiveButtonData:(const uint8_t *)  data;
 -(void) bleDidReceiveAirmemsData:(const uint32_t *)  data;
 -(void) bleDidReceiveImuData:(const uint8_t *)  data;
-
+-(void) bleDidReceiveBatteryLevel:(const uint8_t *) data;
+-(void) bleDidReceiveButtonDataRemote:(const uint8_t *)  data;
 
 
 @required
@@ -45,13 +46,14 @@
 @property (nonatomic, strong) NSString   *connected;
 
 
-
 -(void) enableReadNotification:(CBPeripheral *)p;
 -(void) read;
 -(void) writeValue:(CBUUID *)serviceUUID characteristicUUID:(CBUUID *)characteristicUUID p:(CBPeripheral *)p data:(NSData *)data;
 
 -(BOOL) isConnected;
 -(BOOL) isSearching;
+-(void) writeCalibrate:(NSData *)d;
+
 -(void) write:(NSData *)d;
 -(void) readRSSI;
 -(int) displayRSSI;
@@ -90,8 +92,8 @@
 -(void) readIMU;
 -(void) readAirMems;
 -(void) update;
-
-
+-(NSMutableArray *) getPeripherals;
+-(void) connectWithPeripheral:(int)index;
 @end
 
 

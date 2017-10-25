@@ -17,12 +17,15 @@
 //nrfConnect:
 
 #define RBL_SERVICE_UUID                          "00001C57-1212-EFDE-1523-785FEABCD123"
- 
+#define BATTERY_SERVICE_UUID                          "180F"
+
  
  #define RBL_CHAR_BUTTON_UUID                     "00001C58-1212-EFDE-1523-785FEABCD123"
  #define RBL_CHAR_AIRMEMS_UUID                        "00001C59-1212-EFDE-1523-785FEABCD123"
  #define RBL_CHAR_IMU_UUID                    "00001C5A-1212-EFDE-1523-785FEABCD123"
- #define RBL_CHAR_UPDATE_UUID                     "00001C60-1212-EFDE-1523-785FEABCD123"
+ #define CALIBRATE_CHARACTERISTIC_UUID                     "00001C60-1212-EFDE-1523-785FEABCD123"
+
+#define BATTERY_LEVEL_CHARACTERISTIC_UUID                         "2A19"
 
 
 
