@@ -27,7 +27,6 @@ class ofApp;
 
 @end
 
-
 class ofxBLE{
 protected:
     ofxBLEDelegate *dongle;
