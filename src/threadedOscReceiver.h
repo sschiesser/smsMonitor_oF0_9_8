@@ -3,7 +3,7 @@
 *     INCLUDES
 * -------------------------------------------------------------- */
 #include "ofMain.h"
-#include "ofApp.h"
+#include "ofApp.hpp"
 #include "ofxOsc.h"
 #include "smsData.h"
 

@@ -14,12 +14,21 @@
 
 #endif /* BluetoothHelper_hpp */
 
+typedef struct{
+    bool button1;
+    bool button2;
+}sensorData;
+
+
 class BluetoothHelper{
 public:
     void searchForDevices(vector<bluetoothDevice>* result);
     void setofxBLE(ofxBLE *myofxBLE1);
     void connectWithDevice(int deviceAtPosition);
     void disconnect();
+    void calibrate();
+    double getBatteryLevel();
 private:
     void loadDevices(vector<bluetoothDevice>* result);
+    void getData(sensorData* s);
 };

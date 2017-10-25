@@ -1,7 +1,7 @@
 /* --------------------------------------------------------------
 *     INCLUDES
 * -------------------------------------------------------------- */
-#include "ofApp.h"
+#include "ofApp.hpp"
 #include "threadedOscReceiver.h"
 #include "threadedOscSender.h"
 

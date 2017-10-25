@@ -38,7 +38,7 @@
 		DF88A270FC853489EE3CBE8E /* threadedOscReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = D862C43C8AA05B52448C98F6 /* threadedOscReceiver.mm */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E4B69E200A3A1BDC003C02F2 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1D0A3A1BDC003C02F2 /* main.mm */; };
-		E4B69E210A3A1BDC003C02F2 /* ofApp.mm in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.mm */; };
+		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
 		E984796BE84AA4315636B6E7 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CC36552DD0A47E758D71FB5 /* imgui_demo.cpp */; };
 		F1EE33138375287C09E291DC /* threadedOscSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CBBF28FB57229BF536C53E78 /* threadedOscSender.mm */; };
 		FB5B49D70C68AC59726ABFC2 /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = 7370FF7D030984325E55DC36 /* BLE.m */; };
@@ -146,8 +146,8 @@
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E4B69B5B0A3A1756003C02F2 /* smsMonitorDebug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = smsMonitorDebug.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4B69E1D0A3A1BDC003C02F2 /* main.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = main.mm; path = src/main.mm; sourceTree = SOURCE_ROOT; };
-		E4B69E1E0A3A1BDC003C02F2 /* ofApp.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = ofApp.mm; path = src/ofApp.mm; sourceTree = SOURCE_ROOT; };
-		E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ofApp.h; path = src/ofApp.h; sourceTree = SOURCE_ROOT; };
+		E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = ofApp.cpp; path = src/ofApp.cpp; sourceTree = SOURCE_ROOT; };
+		E4B69E1F0A3A1BDC003C02F2 /* ofApp.hpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ofApp.hpp; path = src/ofApp.hpp; sourceTree = SOURCE_ROOT; };
 		E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = "openFrameworks-Info.plist"; sourceTree = "<group>"; };
 		E4EB691F138AFCF100A09F29 /* CoreOF.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = CoreOF.xcconfig; path = ../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig; sourceTree = SOURCE_ROOT; };
 		E4EB6923138AFD0F00A09F29 /* Project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Project.xcconfig; sourceTree = "<group>"; };
@@ -408,8 +408,8 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.mm */,
-				E4B69E1E0A3A1BDC003C02F2 /* ofApp.mm */,
-				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
+				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
+				E4B69E1F0A3A1BDC003C02F2 /* ofApp.hpp */,
 				00A24CAE3A02C0D809F02D44 /* smsData.h */,
 				68BE4AAD4B1E53DC7B93BE29 /* smsGui.h */,
 				D862C43C8AA05B52448C98F6 /* threadedOscReceiver.mm */,
@@ -562,7 +562,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.mm in Sources */,
-				E4B69E210A3A1BDC003C02F2 /* ofApp.mm in Sources */,
+				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				DF88A270FC853489EE3CBE8E /* threadedOscReceiver.mm in Sources */,
 				F1EE33138375287C09E291DC /* threadedOscSender.mm in Sources */,
 				C5A3B6D6A2C93CC0A32E38EE /* ofxBLE.mm in Sources */,

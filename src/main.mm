@@ -1,5 +1,5 @@
 #include "ofMain.h"
-#include "ofApp.h"
+#include "ofApp.hpp"
 #include "smsGui.h"
 #if (OF_VERSION_MINOR != 9) && defined(TARGET_OPENGLES)
 #include "ofGLProgrammableRenderer.h"

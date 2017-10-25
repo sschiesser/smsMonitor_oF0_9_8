@@ -9,9 +9,11 @@
 #include "ofxBLE.h"
 
 ofxBLE *myofxBLE;
+sensorData *mySensorData;
 
 void BluetoothHelper::setofxBLE(ofxBLE *myofxBLE1){
     myofxBLE = myofxBLE1;
+    mySensorData = new sensorData;
 }
 
 /*starts a scan and after two seconds writes the found devices to the result pointer*/
@@ -51,11 +53,23 @@ void BluetoothHelper::loadDevices(vector<bluetoothDevice>* result){
 
 /*connects with the device at a certain position in the device list*/
 void BluetoothHelper::connectWithDevice(int deviceAtPosition){
+    //myofxBLE->ofxBLE::setDataStruct();
     myofxBLE->ofxBLE::connectWithPeripheral(deviceAtPosition);
 }
 
 void BluetoothHelper::disconnect(){
     myofxBLE->ofxBLE::connectWithPeripheral(0);
+}
+
+void BluetoothHelper::calibrate(){
+    
+}
+
+
+#pragma region DataGetters
+
+double BluetoothHelper::getBatteryLevel(){
+    return myofxBLE->ofxBLE::BatteryLevel();
 }
 
 

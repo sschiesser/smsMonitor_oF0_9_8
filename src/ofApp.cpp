@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "ofApp.hpp"
 #include "smsGui.h"
 
 #include "ofxBLE.h"
@@ -466,6 +466,11 @@ void ofApp::draw() {
                             else {
                                 ImGui::ImageButton((ImTextureID)(uintptr_t)searchDisabledID, ImVec2(72, 16), ImVec2(0, 0), ImVec2(1, 1), 0);
                             }
+                            
+                            if (ImGui::Button("Write")) {
+                                    myBluetoothHelper->BluetoothHelper::calibrate();
+                                }
+
                         }
                         const char* strs[1024] = {0};
                         
@@ -494,8 +499,11 @@ void ofApp::draw() {
 
                     if (ImGui::Button("Connect")) {
 
+                        if(!devices->empty()){
                         myBluetoothHelper->BluetoothHelper::connectWithDevice(listbox_item_current);
+                            
                         showDeviceList = false;
+                        }
                     }
                 }
                 else{
@@ -571,7 +579,7 @@ void ofApp::draw() {
                                 //float battery = (rand() % 100) / 100.;
                                 float battery = 0;
                                 if(MEINofxBLE->isConnected()) {
-                                    battery = 0.8;
+                                    battery = myBluetoothHelper->BluetoothHelper::getBatteryLevel();
                                 }
                                 ImGui::PushItemWidth(140);
                                 ImGui::ProgressBar(battery, ImVec2(0.0f, 0.0f));

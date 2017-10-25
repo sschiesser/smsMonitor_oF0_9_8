@@ -4,4 +4,5 @@ Decouple objective C code from ofApp and make ofApp a C++ class again
 Implement disconnection function
 make UI beautiful
 resolve error: can't export app and then open it from desktop. (can't load file assertion fails in imgui_draw.cpp line 1196)
+Device huge methods in ofApp.cpp up into multiple smaller ones
 
