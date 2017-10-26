@@ -11,8 +11,21 @@
 ofxBLE *myofxBLE;
 sensorData *mySensorData;
 
+BluetoothHelper::BluetoothHelper() {
+    
+    myofxBLE = new(ofxBLE);
+    myofxBLE->connectedDevices = 0;
+    myofxBLE->oscRunning = false;
+    myofxBLE->restart = false;
+
+}
+
+ofxBLE* BluetoothHelper::getofxBLE(){
+    return myofxBLE;
+}
+
 void BluetoothHelper::setofxBLE(ofxBLE *myofxBLE1){
-    myofxBLE = myofxBLE1;
+    //myofxBLE = myofxBLE1;
     mySensorData = new sensorData;
 }
 

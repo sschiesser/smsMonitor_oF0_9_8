@@ -22,6 +22,7 @@ typedef struct{
 
 class BluetoothHelper{
 public:
+    BluetoothHelper();
     void searchForDevices(vector<bluetoothDevice>* result);
     void setofxBLE(ofxBLE *myofxBLE1);
     void connectWithDevice(int deviceAtPosition);
@@ -30,6 +31,7 @@ public:
     double getBatteryLevel();
     bool getButton1DataRemote();
     bool getButton2DataRemote();
+    ofxBLE* getofxBLE(); // has to be replaced
 private:
     void loadDevices(vector<bluetoothDevice>* result);
     void getData(sensorData* s);

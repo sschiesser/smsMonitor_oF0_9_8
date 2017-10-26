@@ -1,3 +1,15 @@
+//
+//  BLEMac.h
+//  smsMonitor
+//
+//  Created by SABRE on 26.10.17.
+//
+
+#ifndef BLEMac_h
+#define BLEMac_h
+
+
+#endif /* BLEMac_h */
 
 /*
  
@@ -34,7 +46,7 @@
 @required
 @end
 
-@interface BLE : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate> {
+@interface BLEMac : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate> {
     
 }
 

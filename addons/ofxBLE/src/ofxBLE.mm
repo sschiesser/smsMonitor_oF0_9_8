@@ -270,7 +270,7 @@ double batteryLevel;
     ahrs[2] = q3.f;
     ahrs[3] = q4.f;
 
-    //NSLog(@"AHRS: %f %f %f %f", ahrs[0], ahrs[1], ahrs[2] ,ahrs[3]);
+    NSLog(@"AHRS: %f %f %f %f", ahrs[0], ahrs[1], ahrs[2] ,ahrs[3]);
     
 //    float f1, f2, f3, f4;
 //    f1 = q1.f;
