@@ -109,7 +109,6 @@ public:
 	void remapData(int p);
 	void calcDelta(int p);
 	void calcJoystick(int p);
-	void calcAhrs(int p);
 	long getWordClock();
 	
 	void BLEdidDisconnect();

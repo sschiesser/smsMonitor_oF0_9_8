@@ -679,16 +679,31 @@ int checkNumberOFDevice;
               [self CBUUIDToString:characteristic.service.UUID],
               peripheral.identifier.UUIDString);
         
+        
         NSLog(@"Error code was %s", [[error description] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
     }
 }
 
+-(void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error{
 
+    if([peripheral.name isEqualToString:@"SMS_sensors"]){
+        if (!isSensorConnected){
+            return;
+        }
+        rssiSensor = RSSI.intValue;
+    }
+    else if([peripheral.name isEqualToString:@"SMS_remote"]){
+        if (!isRemoteConnected){
+            return;
+        }
+        rssiRemote = RSSI.intValue;
+    }
+
+}
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
     
-    NSLog(@"im hiiier");
     [self readRSSI];
     if([peripheral.name isEqualToString:@"SMS_sensors"]){
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) {

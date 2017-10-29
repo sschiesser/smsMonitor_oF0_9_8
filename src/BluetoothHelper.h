@@ -29,10 +29,7 @@ struct bluetoothDevice{
 
 class BluetoothHelper{
 public:
-    bool oscRunning = false;
-    int connectedDevices = 0;
-    bool restart = false;
-    
+    int connectedDevices = 0;    
     
     BluetoothHelper();
     void searchForDevices(std::vector<bluetoothDevice>* result);

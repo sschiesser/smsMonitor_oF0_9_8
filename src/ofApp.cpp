@@ -17,6 +17,7 @@ ofBoxPrimitive* myBox;
 ofConePrimitive* myCone;
 bool showDeviceList = false;
 vector<bluetoothDevice> *devices;
+bool oscRunning = false;
 
 
 
@@ -131,12 +132,7 @@ void ofApp::setup() {
     myCone->setCapColor(ofColor::yellow);
 
     //starting Bluetooth
-    //myBluetoothHelper->BluetoothHelper::getofxBLE() = new(ofxBLE);
     myBluetoothHelper->BluetoothHelper::connectedDevices = 0;
-    myBluetoothHelper->BluetoothHelper::oscRunning = false;
-    myBluetoothHelper->BluetoothHelper::restart = false;
-    
-    //myBluetoothHelper->BluetoothHelper::setofxBLE(myBluetoothHelper->BluetoothHelper::getofxBLE());
     devices = new(vector<bluetoothDevice>);
 }
 
@@ -226,13 +222,6 @@ bool doSetTheme = false;
 void ofApp::update() {
     
     
-    if(myBluetoothHelper->isConnected()){
-        myBluetoothHelper->BluetoothHelper::oscRunning = true;
-    }
-    else{
-        myBluetoothHelper->BluetoothHelper::oscRunning = false;
-
-    }
     static double pressureOffset = 0.;
     static double temperatureOffset = 0.;
     static int airmemsCalibCounter = 0;
@@ -252,7 +241,7 @@ void ofApp::update() {
         remapData(OscReceiverThread->haveInput);
         OscReceiverThread->haveInput = -1;
     }
-    
+    /*
     if(myBluetoothHelper->BluetoothHelper::restart)
     {
         cout << "RESTARTED BLE!!!" << endl;
@@ -264,7 +253,7 @@ void ofApp::update() {
         airmemsCalibCounter = 0;
         myBluetoothHelper->BluetoothHelper::restart = false;
     }
-    
+    */
     if (myBluetoothHelper->BluetoothHelper::haveButtonData())
     {
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::getButton1Data();
@@ -406,7 +395,7 @@ void ofApp::drawHeader(){
             // Timecode
             {
                 static long ts, ms, s, m, h;
-                if (myBluetoothHelper->BluetoothHelper::oscRunning) {
+                if (oscRunning) {
                     ts = getWordClock();
                     ms = ts % 1000;
                     s = ((ts - ms) / 1000) % 60;
@@ -425,29 +414,46 @@ void ofApp::drawHeader(){
             
             // Buttons
             {
+                ImGui::SameLine(ImGui::GetWindowWidth()-160);
+
+                ImGui::BeginGroup();
+
+                if (ImGui::Button("Calibrate")) {
+                    myBluetoothHelper->BluetoothHelper::calibrate();
+                }
+                /*
+                if (ImGui::Button("Test")) {
+                    
+                }
+*/
+                ImGui::EndGroup();
                 ImGui::SameLine(ImGui::GetWindowWidth()-80);
                 //                        ImGui::PushFont(fontClock);
                 ImGui::BeginGroup();
                 {
                     // OSC
-                    if (myBluetoothHelper->BluetoothHelper::oscRunning) {
+                    if (oscRunning) {
                         // if BLE running... STOP
                         if(ImGui::ImageButton((ImTextureID)(uintptr_t)stopOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-                            OscSenderThread->stop();
-                            oscSenderRunning = false;
+                            //OscSenderThread->stop();
+                            //oscSenderRunning = false;
                             //                                    stopBleHid();
                             //                              BleHidThread->stop();
-                            myBluetoothHelper->BluetoothHelper::oscRunning = false;
+                            OscSenderThread->stop();
+                            oscRunning = false;
+                            //cout << "stop OSC" << endl;
                         }
                     }
                     else {
                         // if BLE NOT running... START
                         if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
-                            myBluetoothHelper->BluetoothHelper::restart = true;
+                            //myBluetoothHelper->BluetoothHelper::restart = true;
                             //                                    startBleHid();
+                            //OscSenderThread->start();
+                            //oscSenderRunning = true;
                             OscSenderThread->start();
-                            oscSenderRunning = true;
-                            myBluetoothHelper->BluetoothHelper::oscRunning = true;
+                            oscRunning = true;
+                            //cout << "start OSC" << endl;
                         }
                     }
                     
@@ -471,13 +477,6 @@ void ofApp::drawHeader(){
                     }
                     else {
                         ImGui::ImageButton((ImTextureID)(uintptr_t)searchDisabledID, ImVec2(72, 16), ImVec2(0, 0), ImVec2(1, 1), 0);
-                    }
-                    
-                    if (ImGui::Button("Write")) {
-                        myBluetoothHelper->BluetoothHelper::calibrate();
-                    }
-                    if (ImGui::Button("Test")) {
-                        
                     }
                     
                     
@@ -540,11 +539,11 @@ void ofApp::drawDeviceList(){
                     showDeviceList = true;
                 }
             }
-            ImGui::SameLine();
             if(!devices->empty()){
 
             if(devices->at(listbox_item_current).status == PERIPHERAL_STATE_CONNECTED){
                 
+                ImGui::SameLine();
                 if(ImGui::Button("Disconnect")){
                     if(devices->at(listbox_item_current).name == "SMS_sensors"){
                         myBluetoothHelper->BluetoothHelper::disconnectSensor();
@@ -1198,7 +1197,7 @@ void ofApp::draw() {
         myCone->ofNode::setOrientation(displayQuat);
         myCone->draw();
 
-        NSLog(@"EulerAngles x: %f y: %f z: %f",EulerX_roll, EulerY_yaw, EulerZ_pitch);
+        //NSLog(@"EulerAngles x: %f y: %f z: %f",EulerX_roll, EulerY_yaw, EulerZ_pitch);
         
     }
     
@@ -1307,7 +1306,6 @@ void ofApp::remapData(int p)
         
         calcDelta(p);
         calcJoystick(p);
-        calcAhrs(p);
         
         OscReceiverThread->rcvMpu[p].newData = false;
         OscReceiverThread->rcvMpu[p].newExtData = false;
@@ -1330,11 +1328,6 @@ void ofApp::calcDelta(int p)
         }
     }
 }
-
-void ofApp::updateDevices(){
-    NSLog(@"update Devices");
-}
-
 //--------------------------------------------------------------
 long ofApp::getWordClock()
 {
@@ -1381,7 +1374,7 @@ void ofApp::calcJoystick(int p)
     OscSenderThread->sendData[p].joystick[SMSDATA_JOY_HEAD_POS] = headTemp;
     OscSenderThread->sendData[p].joystick[SMSDATA_JOY_PICTH_POS] = pitchTemp;
 }
-
+/*
 //--------------------------------------------------------------
 void ofApp::calcAhrs(int p)
 {
@@ -1389,10 +1382,11 @@ void ofApp::calcAhrs(int p)
 }
 
 //--------------------------------------------------------------
+
 void ofApp::BLEdidDisconnect() {
     NSLog(@"ofApp::BLEdidDisconnect()");
     myBluetoothHelper->BluetoothHelper::connectedDevices -= 1;
-    myBluetoothHelper->BluetoothHelper::oscRunning = false;
+    oscRunning = false;
 //    oscSenderRunning = false;
 //    OscSenderThread->stop();
 //    bleHidRunning = false;
@@ -1402,8 +1396,8 @@ void ofApp::BLEdidDisconnect() {
 void ofApp::didBLEConnect() {
     NSLog(@"ofApp::BLEdidConnect()");
     myBluetoothHelper->BluetoothHelper::connectedDevices += 1;
-    myBluetoothHelper->BluetoothHelper::oscRunning = true;
-    myBluetoothHelper->BluetoothHelper::restart = true;
+    oscRunning = true;
+    //myBluetoothHelper->BluetoothHelper::restart = true;
 //    wordClockBase = ofGetSystemTime();
 //    oscSenderRunning = true;
 //    OscSenderThread->start();
@@ -1420,7 +1414,7 @@ void ofApp::BLEdidUpdateRSSI(int rssi) {
     
 }
 
-
+*/
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
     
