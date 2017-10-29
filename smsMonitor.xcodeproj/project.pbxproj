@@ -32,9 +32,9 @@
 		A0F2BFB15B92B4C6EB9527DE /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C966A8F6085AAA2FED6F411 /* Helpers.cpp */; };
 		ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADD194746185E2DA11468377 /* IpEndpointName.cpp */; };
 		C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8881B3C8C0A1C45F042E7A /* OscPrintReceivedElements.cpp */; };
-		C5A3B6D6A2C93CC0A32E38EE /* ofxBLE.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4CF1E1F5B5F2A149AF434F1 /* ofxBLE.mm */; };
 		DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7C7BDAD29F580A47FF56B52 /* BaseEngine.cpp */; };
-		DE525B351FA28F8C000395D5 /* BLEMac.m in Sources */ = {isa = PBXBuildFile; fileRef = DE525B341FA28F8C000395D5 /* BLEMac.m */; };
+		DE525B3E1FA49E98000395D5 /* Adapter.h in Sources */ = {isa = PBXBuildFile; fileRef = DE525B3C1FA49E98000395D5 /* Adapter.h */; };
+		DE525B3F1FA4A3CD000395D5 /* Adapter.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE525B3D1FA49E98000395D5 /* Adapter.mm */; };
 		DEAB007F1F92884300F06676 /* BluetoothHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = DEAB007D1F92884300F06676 /* BluetoothHelper.mm */; };
 		DF88A270FC853489EE3CBE8E /* threadedOscReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = D862C43C8AA05B52448C98F6 /* threadedOscReceiver.mm */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
@@ -42,7 +42,7 @@
 		E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */; };
 		E984796BE84AA4315636B6E7 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9CC36552DD0A47E758D71FB5 /* imgui_demo.cpp */; };
 		F1EE33138375287C09E291DC /* threadedOscSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CBBF28FB57229BF536C53E78 /* threadedOscSender.mm */; };
-		FB5B49D70C68AC59726ABFC2 /* BLE.m in Sources */ = {isa = PBXBuildFile; fileRef = 7370FF7D030984325E55DC36 /* BLE.m */; };
+		FB5B49D70C68AC59726ABFC2 /* BLE.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7370FF7D030984325E55DC36 /* BLE.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,7 +107,7 @@
 		68BE4AAD4B1E53DC7B93BE29 /* smsGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = smsGui.h; path = src/smsGui.h; sourceTree = SOURCE_ROOT; };
 		6B65E6930994CC4B2D2B8B33 /* OscPacketListener.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscPacketListener.h; path = addons/ofxOsc/libs/oscpack/src/osc/OscPacketListener.h; sourceTree = SOURCE_ROOT; };
 		6CF9B1FD213484DDDB7AE362 /* imgui.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = imgui.cpp; path = addons/ofxImGui/libs/imgui/src/imgui.cpp; sourceTree = SOURCE_ROOT; };
-		7370FF7D030984325E55DC36 /* BLE.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = BLE.m; path = addons/ofxBLE/libs/BLE/BLE.m; sourceTree = SOURCE_ROOT; };
+		7370FF7D030984325E55DC36 /* BLE.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = BLE.mm; path = addons/ofxBLE/libs/BLE/BLE.mm; sourceTree = SOURCE_ROOT; };
 		748079BFB4742DB856EABE40 /* Helpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = Helpers.h; path = addons/ofxImGui/src/Helpers.h; sourceTree = SOURCE_ROOT; };
 		75EDE0F944593EF8C610B0A1 /* stb_textedit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = stb_textedit.h; path = addons/ofxImGui/libs/imgui/src/stb_textedit.h; sourceTree = SOURCE_ROOT; };
 		7689F8A0F3D0B7635A8C3104 /* ofxOscArg.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscArg.h; path = addons/ofxOsc/src/ofxOscArg.h; sourceTree = SOURCE_ROOT; };
@@ -117,7 +117,6 @@
 		8B30E93FD3D3475EED522A0E /* ofxOscBundle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscBundle.h; path = addons/ofxOsc/src/ofxOscBundle.h; sourceTree = SOURCE_ROOT; };
 		8C75AFC8774A62495DD53464 /* ofxOscReceiver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscReceiver.h; path = addons/ofxOsc/src/ofxOscReceiver.h; sourceTree = SOURCE_ROOT; };
 		8E362ECECD928E7B3EBA5C53 /* BaseTheme.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = BaseTheme.cpp; path = addons/ofxImGui/src/BaseTheme.cpp; sourceTree = SOURCE_ROOT; };
-		8E6F509EF076032E27C1D6B8 /* ofxBLE.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxBLE.h; path = addons/ofxBLE/src/ofxBLE.h; sourceTree = SOURCE_ROOT; };
 		9BF3AA0D4FAA89D0F8A0E545 /* OscReceivedElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscReceivedElements.cpp; path = addons/ofxOsc/libs/oscpack/src/osc/OscReceivedElements.cpp; sourceTree = SOURCE_ROOT; };
 		9CC36552DD0A47E758D71FB5 /* imgui_demo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = imgui_demo.cpp; path = addons/ofxImGui/libs/imgui/src/imgui_demo.cpp; sourceTree = SOURCE_ROOT; };
 		9E02D9F3A04B5573758EBCF8 /* imgui_draw.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = imgui_draw.cpp; path = addons/ofxImGui/libs/imgui/src/imgui_draw.cpp; sourceTree = SOURCE_ROOT; };
@@ -140,8 +139,9 @@
 		D91100C1FBA245AD6CB55BD3 /* ofxImGui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxImGui.h; path = addons/ofxImGui/src/ofxImGui.h; sourceTree = SOURCE_ROOT; };
 		D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = OscTypes.cpp; path = addons/ofxOsc/libs/oscpack/src/osc/OscTypes.cpp; sourceTree = SOURCE_ROOT; };
 		DE525B311FA087CC000395D5 /* TODO */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
-		DE525B341FA28F8C000395D5 /* BLEMac.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BLEMac.m; sourceTree = "<group>"; };
-		DE525B361FA28FA4000395D5 /* BLEMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BLEMac.h; sourceTree = "<group>"; };
+		DE525B381FA36D6C000395D5 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		DE525B3C1FA49E98000395D5 /* Adapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Adapter.h; sourceTree = "<group>"; };
+		DE525B3D1FA49E98000395D5 /* Adapter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Adapter.mm; sourceTree = "<group>"; };
 		DEAB007D1F92884300F06676 /* BluetoothHelper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BluetoothHelper.mm; sourceTree = "<group>"; };
 		DEAB007E1F92884300F06676 /* BluetoothHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothHelper.h; sourceTree = "<group>"; };
 		DF49D76C45D5DB505A234880 /* ofxOscMessage.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = ofxOscMessage.cpp; path = addons/ofxOsc/src/ofxOscMessage.cpp; sourceTree = SOURCE_ROOT; };
@@ -157,7 +157,6 @@
 		E6DEF695B88BA5FAACEAA937 /* UdpSocket.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = UdpSocket.cpp; path = addons/ofxOsc/libs/oscpack/src/ip/posix/UdpSocket.cpp; sourceTree = SOURCE_ROOT; };
 		F0E2047B4D03D5151730B52B /* Gui.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = Gui.cpp; path = addons/ofxImGui/src/Gui.cpp; sourceTree = SOURCE_ROOT; };
 		F4A8929C76DDDA75F9DCBDDF /* threadedOscSender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = threadedOscSender.h; path = src/threadedOscSender.h; sourceTree = SOURCE_ROOT; };
-		F4CF1E1F5B5F2A149AF434F1 /* ofxBLE.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = ofxBLE.mm; path = addons/ofxBLE/src/ofxBLE.mm; sourceTree = SOURCE_ROOT; };
 		F4F5B6B8BA2BD52C646ED908 /* OscException.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = OscException.h; path = addons/ofxOsc/libs/oscpack/src/osc/OscException.h; sourceTree = SOURCE_ROOT; };
 		F7FBC56859535E597B24BB91 /* NetworkingUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = NetworkingUtils.h; path = addons/ofxOsc/libs/oscpack/src/ip/NetworkingUtils.h; sourceTree = SOURCE_ROOT; };
 		FC5DA1C87211D4F6377DA719 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = tinyxmlparser.cpp; path = addons/ofxXmlSettings/libs/tinyxmlparser.cpp; sourceTree = SOURCE_ROOT; };
@@ -421,9 +420,10 @@
 				F4A8929C76DDDA75F9DCBDDF /* threadedOscSender.h */,
 				DEAB007E1F92884300F06676 /* BluetoothHelper.h */,
 				DEAB007D1F92884300F06676 /* BluetoothHelper.mm */,
+				DE525B3C1FA49E98000395D5 /* Adapter.h */,
+				DE525B3D1FA49E98000395D5 /* Adapter.mm */,
 				DE525B311FA087CC000395D5 /* TODO */,
-				DE525B361FA28FA4000395D5 /* BLEMac.h */,
-				DE525B341FA28F8C000395D5 /* BLEMac.m */,
+				DE525B381FA36D6C000395D5 /* Constants.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -450,7 +450,7 @@
 			isa = PBXGroup;
 			children = (
 				3FA337333558A862A5C56E1D /* BLE.h */,
-				7370FF7D030984325E55DC36 /* BLE.m */,
+				7370FF7D030984325E55DC36 /* BLE.mm */,
 				C2802AE5604424FE69ED05A5 /* BLEDefines.h */,
 			);
 			path = BLE;
@@ -459,8 +459,6 @@
 		FE9D7CACFC47340C8CB9B0E2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				8E6F509EF076032E27C1D6B8 /* ofxBLE.h */,
-				F4CF1E1F5B5F2A149AF434F1 /* ofxBLE.mm */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -570,8 +568,7 @@
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				DF88A270FC853489EE3CBE8E /* threadedOscReceiver.mm in Sources */,
 				F1EE33138375287C09E291DC /* threadedOscSender.mm in Sources */,
-				C5A3B6D6A2C93CC0A32E38EE /* ofxBLE.mm in Sources */,
-				FB5B49D70C68AC59726ABFC2 /* BLE.m in Sources */,
+				FB5B49D70C68AC59726ABFC2 /* BLE.mm in Sources */,
 				DBBE189ECD171A97DCF46C6A /* BaseEngine.cpp in Sources */,
 				27CF6B6E279F8EE58C9D4B90 /* BaseTheme.cpp in Sources */,
 				462C212713EFFA5383B35DAB /* EngineGLFW.cpp in Sources */,
@@ -581,13 +578,13 @@
 				5C2607C471F8D48C0036C56E /* imgui.cpp in Sources */,
 				E984796BE84AA4315636B6E7 /* imgui_demo.cpp in Sources */,
 				00413C35AAE31B483D7538AB /* imgui_draw.cpp in Sources */,
+				DE525B3E1FA49E98000395D5 /* Adapter.h in Sources */,
 				72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */,
 				5864AD82E20F15536D054EA3 /* ofxOscMessage.cpp in Sources */,
 				4ADB88E2FB52E76A471065DE /* ofxOscParameterSync.cpp in Sources */,
 				640279EE111671BD026CB013 /* ofxOscReceiver.cpp in Sources */,
 				8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */,
 				ADE367465D2A8EBAD4C7A8D9 /* IpEndpointName.cpp in Sources */,
-				DE525B351FA28F8C000395D5 /* BLEMac.m in Sources */,
 				67FE4C7B15C2F0478C8126C2 /* NetworkingUtils.cpp in Sources */,
 				510CAFE035E576A4E1502D52 /* UdpSocket.cpp in Sources */,
 				62545D179C94265CA1389D4A /* OscOutboundPacketStream.cpp in Sources */,
@@ -595,6 +592,7 @@
 				0546D1A38E13BD319CC9755B /* OscReceivedElements.cpp in Sources */,
 				DEAB007F1F92884300F06676 /* BluetoothHelper.mm in Sources */,
 				879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */,
+				DE525B3F1FA4A3CD000395D5 /* Adapter.mm in Sources */,
 				63B57AC5BF4EF088491E0317 /* ofxXmlSettings.cpp in Sources */,
 				933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */,
 				9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */,

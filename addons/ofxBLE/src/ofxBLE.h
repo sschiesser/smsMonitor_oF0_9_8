@@ -17,11 +17,11 @@ class ofApp;
 
 @interface ofxBLEDelegate : NSObject <BLEDelegate>
 {
-    BLE *ble;
+    BLEObjectiveC *ble;
 }
 
 @property (assign, atomic) ofApp *dataDelegate;
-@property (strong, nonatomic)   BLE *ble;
+@property (strong, nonatomic)   BLEObjectiveC *ble;
 @property unsigned char * receivedDATA;
 @property int lengthOfDATA;
 

@@ -3,7 +3,6 @@
 //
 //  Created by Andikan on 11/11/2014.
 //
-
 #import "ofxBLE.h"
 #import "Cocoa/Cocoa.h"
 // Objective C class implementations
@@ -57,7 +56,7 @@ double batteryLevel;
 - (void)viewDidLoad
 {
 
-    ble = [[BLE alloc] init];
+    ble = [[BLEObjectiveC alloc] init];
     [ble controlSetup:1];
     ble.delegate = self;
 }
@@ -128,7 +127,7 @@ double batteryLevel;
          */
     }
     
-    if (ble.peripherals) ble.peripherals = nil;
+    if (ble.foundPeripherals) ble.foundPeripherals = nil;
     
 //    [btnConnect setEnabled:false];
     [ble findBLEPeripherals:2];
@@ -185,7 +184,9 @@ double batteryLevel;
 
 -(bool)getButton1Data
 {
-    return Button1;
+    BLE *b = new(BLE);
+    return b->BLE::getButton(1);
+    //return Button1;
 }
 -(bool)getButton2Data
 {
@@ -420,13 +421,13 @@ void ofxBLE::update(){
 }
 
 NSMutableArray* ofxBLE::getPeripherals(){
-    return dongle.ble.peripherals;
+    return dongle.ble.foundPeripherals;
 }
 
 
 void ofxBLE::connectWithPeripheral(int index){
 
-    [dongle.ble connectPeripheral:[dongle.ble.peripherals objectAtIndex:index]];
+    [dongle.ble connectPeripheral:[dongle.ble.foundPeripherals objectAtIndex:index]];
 }
 
 

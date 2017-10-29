@@ -15,24 +15,22 @@
 #import "BLEDefines.h"
 #import "Cocoa/Cocoa.h"
 
-@implementation BLE
+@implementation BLEObjectiveC
 
 @synthesize delegate;
 @synthesize CM;
-@synthesize peripherals;
+@synthesize foundPeripherals;
 @synthesize activePeripheral;
+@synthesize activePeripheralRemote;
+@synthesize AirmemsData;
+@synthesize ButtonData;
+@synthesize ButtonDataRemote;
+@synthesize ImuData;
+@synthesize BatteryLevel;
+@synthesize rssi;
+@synthesize isConnected;
 
-static bool isConnected = false;
 static bool isSearching = false;
-static int rssi = 0;
-
-
-NSData *ButtonDataRemote;
-
-NSData *ButtonData;
-NSData *AirmemsData;
-NSData *ImuData;
-NSData *BatteryLevel;
 
 int numberOfSMSDevice;
 int checkNumberOFDevice;
@@ -41,10 +39,7 @@ int checkNumberOFDevice;
 {
    // return rssi;
     [activePeripheral readRSSI];
-}
--(int) displayRSSI
-{
-    return rssi;
+    [activePeripheralRemote readRSSI];
 }
 
 -(BOOL) isConnected
@@ -62,6 +57,7 @@ int checkNumberOFDevice;
 // SMS Service Charakteristiken
 
 
+//Send Calibrate Request Sensor
 -(void) writeCalibrate:(NSData *)d
 {
     CBUUID *uuid_service = [CBUUID UUIDWithString:@RBL_SERVICE_UUID];
@@ -71,15 +67,15 @@ int checkNumberOFDevice;
 }
 
 
-
+/*
 -(void) readButton
 {
     CBUUID *uuid_service = [CBUUID UUIDWithString:@RBL_SERVICE_UUID];
     CBUUID *uuid_char = [CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID];
 
 }
-
-
+*/
+/*
 -(void) read
 {
     CBUUID *uuid_service = [CBUUID UUIDWithString:@RBL_SERVICE_UUID];
@@ -87,7 +83,8 @@ int checkNumberOFDevice;
     
     [self readValue:uuid_service characteristicUUID:uuid_char p:activePeripheral];
 }
-
+*/
+/*
 -(void) write:(NSData *)d
 {
     CBUUID *uuid_service = [CBUUID UUIDWithString:@RBL_SERVICE_UUID];
@@ -95,7 +92,8 @@ int checkNumberOFDevice;
     
     [self writeValue:uuid_service characteristicUUID:uuid_char p:activePeripheral data:d];
 }
-
+*/
+/*
 -(void) enableReadNotification:(CBPeripheral *)p
 {
     CBUUID *uuid_service = [CBUUID UUIDWithString:@RBL_SERVICE_UUID];
@@ -103,7 +101,8 @@ int checkNumberOFDevice;
     
     [self notification:uuid_service characteristicUUID:uuid_char p:p on:YES];
 }
-
+*/
+/*
 -(void) notification:(CBUUID *)serviceUUID characteristicUUID:(CBUUID *)characteristicUUID p:(CBPeripheral *)p on:(BOOL)on
 {
     CBService *service = [self findServiceFromUUID:serviceUUID p:p];
@@ -131,11 +130,13 @@ int checkNumberOFDevice;
     
     [p setNotifyValue:on forCharacteristic:characteristic];
 }
-
+*/
+/*
 -(UInt16) frameworkVersion
 {
     return RBL_BLE_FRAMEWORK_VER;
 }
+*/
 
 -(NSString *) CBUUIDToString:(CBUUID *) cbuuid;
 {
@@ -220,7 +221,7 @@ int checkNumberOFDevice;
 
 - (int) controlSetup: (int) s
 {
-    self.peripherals=[NSMutableArray new];
+    self.foundPeripherals=[NSMutableArray new];
 
     self.CM = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     return 0;
@@ -253,29 +254,60 @@ int checkNumberOFDevice;
 #endif
     
     NSLog(@"scanForPeripheralsWithServices");
-    
+
     return 0; // Started scanning OK !
 }
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error;
 {
+    if([peripheral.name isEqualToString:@"SMS_sensors"]){
+        activePeripheral = nil;
+    }
+    else if([peripheral.name isEqualToString:@"SMS_remote"]){
+        activePeripheralRemote = nil;
+    }
     NSLog(@"didDisconnect");
-    done = false;
-    
+    //NSLog([NSString stringWithFormat:@"%@", error]);
     [[self delegate] bleDidDisconnect];
     
-    isConnected = false;
+    if(activePeripheral == nil){
+        AirmemsData = nil;
+        ButtonData = nil;
+        BatteryLevel = nil;
+        ImuData = nil;
+    }
+    if(activePeripheralRemote == nil){
+        ButtonDataRemote = nil;
+    }
+
+    if(activePeripheral == nil && activePeripheralRemote == nil){
+        isConnected = false;
+    }
+    
+    NSLog([NSString stringWithFormat:@"%@",error]);
+
 }
 
 - (void) connectPeripheral:(CBPeripheral *)peripheral
 {
     NSLog(@"Connecting to peripheral with UUID : %@", peripheral.identifier.UUIDString);
     
-    self.activePeripheral = peripheral;
-    self.activePeripheral.delegate = self;
-    //peripheral.delegate = self;
-    [self.CM connectPeripheral:self.activePeripheral
-                       options:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+    if([peripheral.name isEqualToString:@"SMS_sensors"]){
+        self.activePeripheral = peripheral;
+        self.activePeripheral.delegate = self;
+        //peripheral.delegate = self;
+        [self.CM connectPeripheral:self.activePeripheral
+                           options:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+
+    }
+    else if([peripheral.name isEqualToString:@"SMS_remote"]){
+        self.activePeripheralRemote = peripheral;
+        self.activePeripheralRemote.delegate = self;
+        //peripheral.delegate = self;
+        [self.CM connectPeripheral:self.activePeripheralRemote
+                           options:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:YES] forKey:CBConnectPeripheralOptionNotifyOnDisconnectionKey]];
+
+    }
     //[self.CM connectPeripheral:peripheral options:nil];
 }
 
@@ -306,71 +338,10 @@ int checkNumberOFDevice;
 {
     [self.CM stopScan];
     NSLog(@"Stopped Scanning");
-    NSLog(@"Known peripherals : %lu", (unsigned long)[self.peripherals count]);
+    NSLog(@"Known peripherals : %lu", (unsigned long)[self.foundPeripherals count]);
     isSearching = false;
+
     //[self printKnownPeripherals];
-}
-
-- (void) printKnownPeripherals
-{
-    NSLog(@"List of currently known peripherals :");
-    
-    const char *output_params[peripherals.count];    //Collecting all device names and sending them back to the gui class
-    for(int i=0;i<self.peripherals.count; i++){
-        CBPeripheral *p = [self.peripherals objectAtIndex:i];
-        
-        output_params[i] = p.name.UTF8String;
-    }
-        
-    for (int i = 0; i < self.peripherals.count; i++)
-    {
-        CBPeripheral *p = [self.peripherals objectAtIndex:i];
-        
-        if (p.identifier != NULL)
-            NSLog(@"%d  |  %@", i, p.identifier.UUIDString);
-        else
-            NSLog(@"%d  |  NULL", i);
-        
-        checkNumberOFDevice = i;
-        
-        [self printPeripheralInfo:p];
-    }
-}
-
-- (void) printPeripheralInfo:(CBPeripheral*)peripheral
-{
-    NSLog(@"------------------------------------");
-    NSLog(@"Peripheral Info :");
-    
-    if (peripheral.identifier != NULL)
-        NSLog(@"CB identifier: %@", peripheral.identifier.UUIDString);
-    else
-        NSLog(@"CB identifier: NULL");
-    
-    NSLog(@"Name: %@", peripheral.name);
-    //NSLog(@"UUID: %@", peripheral.UUID);
-    NSLog(@"description: %@", peripheral.description);
-    NSLog(@"state: %ld", (long)peripheral.state);
-    //NSLog(@"connected: %@", (peripheral.isConnected) ? @"YES" : @"NO");
-    NSLog(@"-------------------------------------");
-    
-
-    //    if([peripheral.identifier.UUIDString isEqualToString: @"AAC29028-4712-4BE3-9427-DB8810B32EFE"]){
-    if([peripheral.name isEqualToString: @"SMS_sensors"]) {
-        
-        NSLog(@"--> it will connect to SMS_sensors <--");
-        
-        numberOfSMSDevice = checkNumberOFDevice;
-        [self connectPeripheral:[peripherals objectAtIndex:numberOfSMSDevice]];
-        
-    }
-    else {
-        NSLog(@"it's not an SMS_sensors. so it will not connect");
-    }
-}
-
--(void)connectWithPeripheral:(int) index{
-    
 }
 
 - (BOOL) UUIDSAreEqual:(NSUUID *)UUID1 UUID2:(NSUUID *)UUID2
@@ -529,8 +500,16 @@ int checkNumberOFDevice;
     }
     */
     NSLog(@"didDiscoverPeripheral");
-    if (!self.peripherals)
-        self.peripherals = [[NSMutableArray alloc] initWithObjects:peripheral,nil];
+    if (self.foundPeripherals== nil){
+        self.foundPeripherals = [[NSMutableArray alloc] initWithObjects:peripheral,nil];
+        if(activePeripheral != nil){
+            [self.foundPeripherals addObject:activePeripheral];
+        }
+        if(activePeripheralRemote != nil){
+            [self.foundPeripherals addObject:activePeripheralRemote];
+        }
+
+    }
     else
     {
         
@@ -548,22 +527,22 @@ int checkNumberOFDevice;
         
         //alter code
     
-        for(int i = 0; i < self.peripherals.count; i++)
+        for(int i = 0; i < self.foundPeripherals.count; i++)
         {
-            CBPeripheral *p = [self.peripherals objectAtIndex:i];
+            CBPeripheral *p = [self.foundPeripherals objectAtIndex:i];
             
             if ((p.identifier == NULL) || (peripheral.identifier == NULL))
                 continue;
             
             if ([self UUIDSAreEqual:p.identifier UUID2:peripheral.identifier])
             {
-                [self.peripherals replaceObjectAtIndex:i withObject:peripheral];
+                [self.foundPeripherals replaceObjectAtIndex:i withObject:peripheral];
                 NSLog(@"Duplicate UUID found updating...");
                 return;
             }
         }
         
-        [self.peripherals addObject:peripheral];
+        [self.foundPeripherals addObject:peripheral];
         
         NSLog(@"New UUID, adding");
     
@@ -582,7 +561,6 @@ int checkNumberOFDevice;
     NSLog(@"%@", self.connected);
     
     [[self delegate] bleDidConnect];
-
     
     //alter code
     /*
@@ -601,7 +579,6 @@ int checkNumberOFDevice;
     NSLog(@"didfail toConnectPeripheral");
 }
 
-static bool done = false;
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
 {
@@ -613,8 +590,17 @@ static bool done = false;
             if ([aChar.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) { // 2
               //  self.activePeripheral = aChar(type: aChar.UUID, properties: CBCharacteristicProperties.Read|CBCharacteristicProperties.Notifiy, value: self.dataToSend, permissions: CBAttributePermissions.Readable);
 
-                [self.activePeripheral setNotifyValue:YES forCharacteristic:aChar];
-                NSLog(@"Found button characteristic");
+                if([peripheral.name isEqualToString:@"SMS_sensors"]){
+                    [self.activePeripheral setNotifyValue:YES forCharacteristic:aChar];
+                    NSLog(@"Found button characteristic");
+                }
+                
+                else if([peripheral.name isEqualToString:@"SMS_remote"]){
+                    [self.activePeripheralRemote setNotifyValue:YES forCharacteristic:aChar];
+                    NSLog(@"Found button characteristic");
+                }
+                
+
             }
             // Request AIRMEMS notification
             else if ([aChar.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_AIRMEMS_UUID]]) { // 3
@@ -632,91 +618,18 @@ static bool done = false;
     else if ([service.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_SERVICE_UUID]])  {
         for (CBCharacteristic *aChar in service.characteristics){
             if ([aChar.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_LEVEL_CHARACTERISTIC_UUID]]) { // 2
-                [self.activePeripheral setNotifyValue:YES forCharacteristic:aChar];
-            }
-        }
-
-    }
-    /*// Retrieve Device Information Services for the Manufacturer Name
-    if ([service.UUID isEqual:[CBUUID UUIDWithString:POLARH7_HRM_DEVICE_INFO_SERVICE_UUID]])  { // 4
-        for (CBCharacteristic *aChar in service.characteristics)
-        {
-            if ([aChar.UUID isEqual:[CBUUID UUIDWithString:POLARH7_HRM_MANUFACTURER_NAME_CHARACTERISTIC_UUID]]) {
-                [self.activePeripheral readValueForCharacteristic:aChar];
-                NSLog(@"Found a device manufacturer name characteristic");
-            }
-        }
-    }*/
-    
-    
-    //alter code
-    /*
-    if (!error)
-    {
-        //        printf("Characteristics of service with UUID : %s found\n",[self CBUUIDToString:service.UUID]);
-        
-        for (int i=0; i < service.characteristics.count; i++)
-        {
-            //            CBCharacteristic *c = [service.characteristics objectAtIndex:i];
-            //            printf("Found characteristic %s\n",[ self CBUUIDToString:c.UUID]);
-            CBService *s = [peripheral.services objectAtIndex:(peripheral.services.count - 1)];
-            
-            if ([service.UUID isEqual:s.UUID])
-            {
-                if (!done)
-                {
-                    [self enableReadNotification:activePeripheral];
-                    [[self delegate] bleDidConnect];
-                    isConnected = true;
-                    done = true;
+                if([peripheral.name isEqualToString:@"SMS_sensors"]){
+                    [self.activePeripheral setNotifyValue:YES forCharacteristic:aChar];
                 }
-                
-                break;
-            }
-        }
-    }
-    else
-    {
-        NSLog(@"Characteristic discorvery unsuccessful!");
-    }
-     */
-}
-
-
-
-/* original code:
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
-{
-    if (!error)
-    {
-        //        printf("Characteristics of service with UUID : %s found\n",[self CBUUIDToString:service.UUID]);
-        
-        for (int i=0; i < service.characteristics.count; i++)
-        {
-            //            CBCharacteristic *c = [service.characteristics objectAtIndex:i];
-            //            printf("Found characteristic %s\n",[ self CBUUIDToString:c.UUID]);
-            CBService *s = [peripheral.services objectAtIndex:(peripheral.services.count - 1)];
-            
-            if ([service.UUID isEqual:s.UUID])
-            {
-                if (!done)
-                {
-                    [self enableReadNotification:activePeripheral];
-                    [[self delegate] bleDidConnect];
-                    isConnected = true;
-                    done = true;
+                else if([peripheral.name isEqualToString:@"SMS_remote"]){
+                    [self.activePeripheralRemote setNotifyValue:YES forCharacteristic:aChar];
+                    NSLog(@"Found battery characteristic");
                 }
-                
-                break;
             }
         }
-    }
-    else
-    {
-        NSLog(@"Characteristic discorvery unsuccessful!");
+
     }
 }
-*/
 
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
 {
@@ -738,15 +651,6 @@ static bool done = false;
     }
 }
 
-/*
-- (void)peripheralManager:(CBPeripheralManager *)peripheral central:(CBCentral *)central didSubscribeToCharacteristic:(CBCharacteristic *)characteristic
-{
-    NSLog(@"latency set to low");
-   [peripheral setDesiredConnectionLatency:CBPeripheralManagerConnectionLatencyLow forCentral:central];
-
-}
-*/
-
 
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
@@ -766,8 +670,12 @@ static bool done = false;
     }
 }
 
+
+
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
+    
+    NSLog(@"im hiiier");
     [self readRSSI];
     if([peripheral.name isEqualToString:@"SMS_sensors"]){
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) {
@@ -775,127 +683,31 @@ static bool done = false;
             // 1
             // Updated value for button received
             //NSLog(@"received a button change");
-            [self getButtonData:characteristic error:error];
+            //[self getButtonData:characteristic error:error];
+            ButtonData = characteristic.value;
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_AIRMEMS_UUID]]) {
             // Updated value for AIR received
             // NSLog(@"received a AIR change");
-            [self getAIRMEMSData:characteristic error:error];
+            AirmemsData = [characteristic value];
+            
         }
         else if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_IMU_UUID]]) {
-            // Updated value for IMU received
-            //NSLog(@"received a IMU change");
-            [self getIMUData:characteristic error:error];
+            ImuData = [characteristic value];
         }
         else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_LEVEL_CHARACTERISTIC_UUID]]){
-            [self getBatteryLevel:characteristic error:error];
-            
+            BatteryLevel = [characteristic value];
         }
     }
     else if([peripheral.name isEqualToString:@"SMS_remote"]){
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) {
-            //        NSLog(@"button received");
-            // 1
-            // Updated value for button received
             NSLog(@"received a button change remote");
-            [self getButtonDataRemote:characteristic error:error];
+            ButtonDataRemote = [characteristic value];
         }
 
     }
 
-    
-    
-    //old code
-    /*
-    unsigned char data[20];
-    
-    static unsigned char buf[512];
-    static int len = 0;
-    NSInteger data_len;
-    
-    if (!error)
-    {
-        if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_TX_UUID]])
-        {
-            data_len = characteristic.value.length;
-            [characteristic.value getBytes:data length:data_len];
-            
-            if (data_len == 20)
-            {
-                memcpy(&buf[len], data, 20);
-                len += data_len;
-                
-                if (len >= 64)
-                {
-                    [[self delegate] bleDidReceiveData:buf length:len];
-                    len = 0;
-                }
-            }
-            else if (data_len < 20)
-            {
-                memcpy(&buf[len], data, data_len);
-                len += data_len;
-                
-                [[self delegate] bleDidReceiveData:buf length:len];
-                len = 0;
-            }
-        }
-    }
-    else
-    {
-        NSLog(@"updateValueForCharacteristic failed!");
-    }*/
 }
-
-- (void) getButtonData:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-    
-    ButtonData = [characteristic value];
-    const uint8_t *reportData = [ButtonData bytes];
-    [[self delegate] bleDidReceiveButtonData:reportData];
-}
-
-- (void) getButtonDataRemote:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-    
-    ButtonDataRemote = [characteristic value];
-    const uint8_t *reportData = [ButtonDataRemote bytes];
-    [[self delegate] bleDidReceiveButtonDataRemote:reportData];
-}
-
-
-- (void) getAIRMEMSData:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-    AirmemsData = [characteristic value];
-    const uint32_t *reportData = [AirmemsData bytes];
-    [[self delegate] bleDidReceiveAirmemsData:reportData];
- //NSLog(@"Airmemsdata: %@",AirmemsData);
-
-
-
-   // NSLog(@"Airmems trie out: %i %i", data, d1);
-}
-- (void) getIMUData:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-    ImuData = [characteristic value];
-    const uint8_t *reportData = [ImuData bytes];
-    [[self delegate] bleDidReceiveImuData:reportData];
-   
-}
-             
-- (void) getBatteryLevel:(CBCharacteristic *)characteristic error:(NSError *)error
-{
-        BatteryLevel = [characteristic value];
-        const uint8_t *reportData = [BatteryLevel bytes];
-        [[self delegate] bleDidReceiveBatteryLevel:reportData];
-        
-}
-             
-
-/*- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error
-{
-    
-}*/
 
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error
 {
@@ -908,11 +720,6 @@ static bool done = false;
         
         //[[self delegate] bleDidUpdateRSSI:activePeripheral.RSSI];
     }
-}
-
--(NSMutableArray *)getPeripheral{
-    
-    return self.peripherals;
 }
 
 @end

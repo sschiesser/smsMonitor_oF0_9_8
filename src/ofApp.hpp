@@ -13,8 +13,9 @@
 #include "threadedOscSender.h"
 //#include "threadedHidReceiver.h"
 #include "smsData.h"
+#include "BluetoothHelper.h"
 
-#include "ofxBLE.h"
+//#include "ofxBLE.h"
 
 //#ifdef _WIN32
 //#include "threadedBleReceiver.h"
@@ -74,14 +75,11 @@ struct dataRefresh {
 	bool delta[3];
 };
 
-struct bluetoothDevice{
-    string name;
-    string uuid;
-};
 
 class ofApp : public ofBaseApp{
 	
 public:
+    BluetoothHelper * myBluetoothHelper;
 	void setup();
 	void update();
 	void draw();

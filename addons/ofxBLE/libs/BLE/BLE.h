@@ -18,6 +18,9 @@
 #import <IOBluetooth/IOBluetooth.h>
 //#endif
 #import <CoreBluetooth/CoreBluetooth.h>
+
+#include "Constants.h"
+
 @protocol BLEDelegate
 @optional
 -(void) bleDidConnect;
@@ -34,14 +37,23 @@
 @required
 @end
 
-@interface BLE : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate> {
+@interface BLEObjectiveC : NSObject <CBCentralManagerDelegate, CBPeripheralDelegate, BLEDelegate> {
     
 }
 
+@property bool isConnected;
+@property int rssi;
 @property (nonatomic,assign) id <BLEDelegate> delegate;
-@property (strong, nonatomic) NSMutableArray *peripherals;
+@property (strong, nonatomic) NSMutableArray *foundPeripherals;
 @property (strong, nonatomic) CBCentralManager *CM;
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
+@property (strong, nonatomic) CBPeripheral *activePeripheralRemote;
+@property (strong, nonatomic) NSData *AirmemsData;
+@property (strong, nonatomic) NSData *ButtonDataRemote;
+@property (strong, nonatomic) NSData *ButtonData;
+@property (strong, nonatomic) NSData *ImuData;
+@property (strong, nonatomic) NSData *BatteryLevel;
+
 
 @property (nonatomic, strong) NSString   *connected;
 
@@ -74,7 +86,6 @@
 -(CBCharacteristic *) findCharacteristicFromUUID:(CBUUID *)UUID service:(CBService*)service;
 
 
-//-(NSString *) NSUUIDToString:(NSUUID *) UUID;
 -(NSString *) CBUUIDToString:(CBUUID *) UUID;
 
 -(int) compareCBUUID:(CBUUID *) UUID1 UUID2:(CBUUID *)UUID2;
@@ -82,18 +93,7 @@
 -(UInt16) CBUUIDToInt:(CBUUID *) UUID;
 -(BOOL) UUIDSAreEqual:(NSUUID *)UUID1 UUID2:(NSUUID *)UUID2;
 
-// SMS Service Charakteristiken
-- (void) getButtonData:(CBCharacteristic *)characteristic error:(NSError *)error;
-- (void) getIMUData:(CBCharacteristic *)characteristic error:(NSError *)error;
-- (void) getAIRMEMSData:(CBCharacteristic *)characteristic error:(NSError *)error;
-
-
--(void) readButton:(CBCharacteristic *)characteristic;
--(void) readIMU;
--(void) readAirMems;
--(void) update;
--(NSMutableArray *) getPeripherals;
 -(void) connectWithPeripheral:(int)index;
-@end
 
+@end
 

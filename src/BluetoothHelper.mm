@@ -6,42 +6,32 @@
 //
 
 #include "BluetoothHelper.h"
-#include "ofxBLE.h"
+#include "Adapter.h"
+//#include "ofxAdapter.h"
+//#include "Adapter.h"
 
-ofxBLE *myofxBLE;
-sensorData *mySensorData;
+Adapter *myAdapter;
 
 BluetoothHelper::BluetoothHelper() {
     
-    myofxBLE = new(ofxBLE);
-    myofxBLE->connectedDevices = 0;
-    myofxBLE->oscRunning = false;
-    myofxBLE->restart = false;
-
+    myAdapter = new(Adapter);
+    currentDeviceList = new(std::vector<bluetoothDevice>);
+    /*
+    myofxAdapter = new(ofxAdapter);
+    myofxAdapter->connectedDevices = 0;
+    myofxAdapter->oscRunning = false;
+    myofxAdapter->restart = false;
+*/
 }
 
-ofxBLE* BluetoothHelper::getofxBLE(){
-    return myofxBLE;
-}
-
-void BluetoothHelper::setofxBLE(ofxBLE *myofxBLE1){
-    //myofxBLE = myofxBLE1;
-    mySensorData = new sensorData;
-}
-
-/*starts a scan and after two seconds writes the found devices to the result pointer*/
-void BluetoothHelper::searchForDevices(vector<bluetoothDevice>* result){
+void BluetoothHelper::getDeviceList(std::vector<bluetoothDevice>* result){
     
-    myofxBLE->ofxBLE::scanPeripherals();
-    std::thread t1(&BluetoothHelper::loadDevices, this, result);
-    t1.detach();
-
-}
-
-/*waits for two seconds and then reads the currently known devices and writes them to the result pointer*/
-void BluetoothHelper::loadDevices(vector<bluetoothDevice>* result){
-    sleep(2.0);
-    NSMutableArray *peripherals = myofxBLE->ofxBLE::getPeripherals();
+    result->clear();
+    BluetoothHelper::currentDeviceList->clear();
+    NSMutableArray *peripherals = myAdapter->Adapter::getPeripherals();
+    if(peripherals == nil){
+        result->clear();
+    }
     for (int i = 0; i < peripherals.count; i++)
     {
         CBPeripheral *p = [peripherals objectAtIndex:i];
@@ -55,6 +45,75 @@ void BluetoothHelper::loadDevices(vector<bluetoothDevice>* result){
                 mD.name = "null";
             }
             mD.uuid = std::string([p.identifier.UUIDString UTF8String]);
+            switch (p.state) {
+                case CBPeripheralStateConnected:
+                    mD.status = PERIPHERAL_STATE_CONNECTED;
+                    break;
+                case CBPeripheralStateConnecting:
+                    mD.status = PERIPHERAL_STATE_CONNECTING;
+                    break;
+                case CBPeripheralStateDisconnected:
+                    mD.status = PERIPHERAL_STATE_DISCONNECTED;
+                    break;
+                case CBPeripheralStateDisconnecting:
+                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
+                    break;
+                    
+                default:
+                    break;
+            }
+            result->insert(result->end(), mD);
+        }
+        else{
+            NSLog(@"A device identifier was NULL! (index: %d)", i);
+        }
+    }
+
+}
+
+/*starts a scan and after two seconds writes the found devices to the result pointer*/
+void BluetoothHelper::searchForDevices(std::vector<bluetoothDevice>* result){
+    
+    myAdapter->Adapter::scanPeripherals();
+    std::thread t1(&BluetoothHelper::loadDevices, this, result);
+    t1.detach();
+
+}
+
+/*waits for two seconds and then reads the currently known devices and writes them to the result pointer*/
+void BluetoothHelper::loadDevices(std::vector<bluetoothDevice>* result){
+    sleep(2.0);
+    NSMutableArray *peripherals = myAdapter->Adapter::getPeripherals();
+    for (int i = 0; i < peripherals.count; i++)
+    {
+        CBPeripheral *p = [peripherals objectAtIndex:i];
+        
+        if (p.identifier != NULL){
+            struct bluetoothDevice mD;
+            if(p.name != NULL){
+                mD.name = std::string([p.name UTF8String]);
+            }
+            else{
+                mD.name = "null";
+            }
+            mD.uuid = std::string([p.identifier.UUIDString UTF8String]);
+            switch (p.state) {
+                case CBPeripheralStateConnected:
+                    mD.status = PERIPHERAL_STATE_CONNECTED;
+                    break;
+                case CBPeripheralStateConnecting:
+                    mD.status = PERIPHERAL_STATE_CONNECTING;
+                    break;
+                case CBPeripheralStateDisconnected:
+                    mD.status = PERIPHERAL_STATE_DISCONNECTED;
+                    break;
+                case CBPeripheralStateDisconnecting:
+                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
+                    break;
+
+                default:
+                    break;
+            }
             result->insert(result->end(), mD);
         }
         else{
@@ -66,31 +125,89 @@ void BluetoothHelper::loadDevices(vector<bluetoothDevice>* result){
 
 /*connects with the device at a certain position in the device list*/
 void BluetoothHelper::connectWithDevice(int deviceAtPosition){
-    //myofxBLE->ofxBLE::setDataStruct();
-    myofxBLE->ofxBLE::connectWithPeripheral(deviceAtPosition);
+    myAdapter->Adapter::connectWithPeripheral(deviceAtPosition);
 }
 
 void BluetoothHelper::disconnect(){
-    myofxBLE->ofxBLE::connectWithPeripheral(0);
+    //myofxAdapter->ofxAdapter::connectWithPeripheral(0);
 }
 
 void BluetoothHelper::calibrate(){
-    myofxBLE->ofxBLE::calibrate();
+    myAdapter->Adapter::calibrate();
 }
 
 
 #pragma region DataGetters
 
 double BluetoothHelper::getBatteryLevel(){
-    return myofxBLE->ofxBLE::BatteryLevel();
+    return myAdapter->Adapter::getBatteryLevel();
 }
 
 bool BluetoothHelper::getButton1DataRemote(){
-    return myofxBLE->ofxBLE::Button1DataRemote();
+    return myAdapter->getButton(BUTTON1_REMOTE);
 }
 bool BluetoothHelper::getButton2DataRemote(){
-    return myofxBLE->ofxBLE::Button2DataRemote();
+    return myAdapter->getButton(BUTTON2_REMOTE);
 }
+bool BluetoothHelper::getButton1Data(){
+    return myAdapter->getButton(BUTTON1_SENSOR);
+}
+bool BluetoothHelper::getButton2Data(){
+    return myAdapter->getButton(BUTTON2_SENSOR);
+}
+
+
+
+#pragma toBeReplaced
+
+bool BluetoothHelper::haveAirmemsData(){
+    return true;
+}
+
+double BluetoothHelper::getPressure(){
+    return myAdapter->Adapter::getPressure();
+
+}
+double BluetoothHelper::getTemperature(){
+    return myAdapter->Adapter::getTemperature();
+
+}
+void BluetoothHelper::sethaveAirmemsDatafalse(){
+    //return myofxAdapter->ofxAdapter::sethaveahrsDatafalse();
+
+}
+bool BluetoothHelper::haveahrsData(){
+    //return myofxAdapter->ofxAdapter::haveahrsData();
+    return true;
+
+}
+double BluetoothHelper::getAhrsData(int i){
+    return myAdapter->Adapter::getAhrs(i);
+
+}
+void BluetoothHelper::sethaveahrsDatafalse(){
+    //return myofxAdapter->ofxAdapter::sethaveahrsDatafalse();
+
+}
+bool BluetoothHelper::isSearching(){
+    return myAdapter->Adapter::isSearching();
+
+}
+bool BluetoothHelper::isConnected(){
+    return myAdapter->Adapter::isConnected();
+
+}
+float BluetoothHelper::getLinkStrength(){
+    return myAdapter->Adapter::getLinkStrength();
+    //return myofxAdapter->ofxAdapter::displayRSSI();
+
+}
+
+bool BluetoothHelper::haveButtonData(){
+    return false;
+}
+
+
 
 
 
