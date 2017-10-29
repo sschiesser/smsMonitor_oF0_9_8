@@ -363,17 +363,35 @@ void ofApp::update() {
         OscSenderThread->newTemperatureData = true;
         
         //the right configuration for the pyramid being on top of the sensor
-        displayQuat.set(dQ[0], dQ[1], -dQ[3], -dQ[2]);
+        //displayQuat.set(dQ[0], dQ[1], -dQ[3], -dQ[2]);
         
+        //the right configuration for the pyramid being on the front of the sensor
+        displayQuat.set(-dQ[0], dQ[1], dQ[2], dQ[3]);
         
-        //displayQuat.set(dQ[0], dQ[1], dQ[2], dQ[3]);
+
+        //Rotating the the Quaternion such that it is displayed horizontally on the screen
+        ofVec3f v1 = ofVec3f(180, 180,0);
+        ofVec3f v2 = ofVec3f(-90,180,0);
+        ofQuaternion correction = ofQuaternion();
+        correction.makeRotate(v1, v2);
+        ofVec3f newImaginaryPart = correction.operator*(ofVec3f(dQ[1],dQ[2],dQ[3]));
+        displayQuat.set(displayQuat.operator*=(correction));
+        
+
+        
+        /*
+         Facts about Quaternions:
+         
+         Assumption: (w,x,y,z) is the quaternion rotating from coordinate frame C1 to coordinate frame C2:
+         
+         Exchange x and y axis: exchange the two axes and negate the real part => (-w,y,x,z)
+         Mirror a the x axis: negate the two other axis: => (w,x,-y,-z)
+         
+         Good link:
+         https://stackoverflow.com/questions/32438252/efficient-way-to-apply-mirror-effect-on-quaternion-rotation
+         */
         
         myBluetoothHelper->BluetoothHelper::sethaveahrsDatafalse();
-        //        NSLog(@"Quat1 in ofApp %f", OscSenderThread->sendData[0].quat[0]);
-        //        NSLog(@"Quat2 in ofApp %f", OscSenderThread->sendData[0].quat[1]);
-        //        NSLog(@"Quat3 in ofApp %f", OscSenderThread->sendData[0].quat[2]);
-        //        NSLog(@"Quat4 in ofApp %f", OscSenderThread->sendData[0].quat[3]);
-        
     }
     
 }
