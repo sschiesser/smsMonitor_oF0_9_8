@@ -6,3 +6,10 @@ make UI beautiful
 resolve error: can't export app and then open it from desktop. (can't load file assertion fails in imgui_draw.cpp line 1196)
 Device huge methods in ofApp.cpp up into multiple smaller ones
 
+************** from Sébastien :-) ******************
+Separate sensors & remote windows to display independant values:
+- link quality
+- battery level
+(-buttons)
+- OSC settings (same by default but changeable)
+(- no need for packet reception statistics)
