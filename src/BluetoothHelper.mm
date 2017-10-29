@@ -128,8 +128,13 @@ void BluetoothHelper::connectWithDevice(int deviceAtPosition){
     myAdapter->Adapter::connectWithPeripheral(deviceAtPosition);
 }
 
-void BluetoothHelper::disconnect(){
-    //myofxAdapter->ofxAdapter::connectWithPeripheral(0);
+
+void BluetoothHelper::disconnectRemote(){
+    myAdapter->Adapter::disconnectRemote();
+}
+
+void BluetoothHelper::disconnectSensor(){
+    myAdapter->Adapter::disconnectSensor();
 }
 
 void BluetoothHelper::calibrate(){
@@ -139,9 +144,14 @@ void BluetoothHelper::calibrate(){
 
 #pragma region DataGetters
 
-double BluetoothHelper::getBatteryLevel(){
-    return myAdapter->Adapter::getBatteryLevel();
+double BluetoothHelper::getBatteryLevelSensor(){
+    return myAdapter->Adapter::getBatteryLevelSensor();
 }
+
+double BluetoothHelper::getBatteryLevelRemote(){
+    return myAdapter->Adapter::getBatteryLevelRemote();
+}
+
 
 bool BluetoothHelper::getButton1DataRemote(){
     return myAdapter->getButton(BUTTON1_REMOTE);
@@ -195,13 +205,19 @@ bool BluetoothHelper::isSearching(){
 }
 bool BluetoothHelper::isConnected(){
     return myAdapter->Adapter::isConnected();
+}
+bool BluetoothHelper::isRemoteConnected(){
+    return myAdapter->Adapter::isRemoteConnected();
+}
+
+float BluetoothHelper::getLinkStrengthSensor(){
+    return myAdapter->Adapter::getLinkStrengthSensor();
 
 }
-float BluetoothHelper::getLinkStrength(){
-    return myAdapter->Adapter::getLinkStrength();
-    //return myofxAdapter->ofxAdapter::displayRSSI();
-
+float BluetoothHelper::getLinkStrengthRemote(){
+    return myAdapter->Adapter::getLinkStrengthRemote();    
 }
+
 
 bool BluetoothHelper::haveButtonData(){
     return false;

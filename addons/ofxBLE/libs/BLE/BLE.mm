@@ -26,9 +26,12 @@
 @synthesize ButtonData;
 @synthesize ButtonDataRemote;
 @synthesize ImuData;
-@synthesize BatteryLevel;
-@synthesize rssi;
-@synthesize isConnected;
+@synthesize BatteryLevelSensor;
+@synthesize BatteryLevelRemote;
+@synthesize rssiSensor;
+@synthesize rssiRemote;
+@synthesize isSensorConnected;
+@synthesize isRemoteConnected;
 
 static bool isSearching = false;
 
@@ -40,11 +43,6 @@ int checkNumberOFDevice;
    // return rssi;
     [activePeripheral readRSSI];
     [activePeripheralRemote readRSSI];
-}
-
--(BOOL) isConnected
-{
-    return isConnected;
 }
 
 -(BOOL) isSearching
@@ -273,20 +271,29 @@ int checkNumberOFDevice;
     if(activePeripheral == nil){
         AirmemsData = nil;
         ButtonData = nil;
-        BatteryLevel = nil;
+        BatteryLevelSensor = nil;
         ImuData = nil;
+        isSensorConnected = false;
     }
     if(activePeripheralRemote == nil){
         ButtonDataRemote = nil;
+        BatteryLevelRemote = nil;
+        isRemoteConnected = false;
     }
 
-    if(activePeripheral == nil && activePeripheralRemote == nil){
-        isConnected = false;
-    }
     
     NSLog([NSString stringWithFormat:@"%@",error]);
 
 }
+
+-(void)disconnectSensor{
+    [self.CM cancelPeripheralConnection:activePeripheral];
+}
+
+-(void)disconnectRemote{
+    [self.CM cancelPeripheralConnection:activePeripheralRemote];
+}
+
 
 - (void) connectPeripheral:(CBPeripheral *)peripheral
 {
@@ -557,7 +564,13 @@ int checkNumberOFDevice;
     [peripheral setDelegate:self];
     [peripheral discoverServices:nil];
     self.connected = [NSString stringWithFormat:@"Connected: %@", peripheral.state == CBPeripheralStateConnected ? @"YES" : @"NO"];
-    isConnected = true;
+    if([peripheral.name isEqualToString:@"SMS_sensors"]){
+        isSensorConnected = true;
+    }
+    else if([peripheral.name isEqualToString:@"SMS_remote"]){
+        isRemoteConnected = true;
+    }
+
     NSLog(@"%@", self.connected);
     
     [[self delegate] bleDidConnect];
@@ -696,7 +709,7 @@ int checkNumberOFDevice;
             ImuData = [characteristic value];
         }
         else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_LEVEL_CHARACTERISTIC_UUID]]){
-            BatteryLevel = [characteristic value];
+            BatteryLevelSensor = [characteristic value];
         }
     }
     else if([peripheral.name isEqualToString:@"SMS_remote"]){
@@ -704,6 +717,10 @@ int checkNumberOFDevice;
             NSLog(@"received a button change remote");
             ButtonDataRemote = [characteristic value];
         }
+        else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_LEVEL_CHARACTERISTIC_UUID]]){
+            BatteryLevelRemote = [characteristic value];
+        }
+
 
     }
 
@@ -711,15 +728,19 @@ int checkNumberOFDevice;
 
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error
 {
-    if (!isConnected)
-        return;
-    
-    if (rssi != peripheral.RSSI.intValue)
-    {
-        rssi = peripheral.RSSI.intValue;
-        
-        //[[self delegate] bleDidUpdateRSSI:activePeripheral.RSSI];
+    if([peripheral.name isEqualToString:@"SMS_sensors"]){
+        if (!isSensorConnected){
+            return;
+        }
+        rssiSensor = peripheral.RSSI.intValue;
     }
+    else if([peripheral.name isEqualToString:@"SMS_remote"]){
+        if (!isRemoteConnected){
+            return;
+        }
+        rssiRemote = peripheral.RSSI.intValue;
+    }
+
 }
 
 @end

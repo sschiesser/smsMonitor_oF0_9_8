@@ -41,8 +41,10 @@
     
 }
 
-@property bool isConnected;
-@property int rssi;
+@property bool isSensorConnected;
+@property bool isRemoteConnected;
+@property int rssiSensor;
+@property int rssiRemote;
 @property (nonatomic,assign) id <BLEDelegate> delegate;
 @property (strong, nonatomic) NSMutableArray *foundPeripherals;
 @property (strong, nonatomic) CBCentralManager *CM;
@@ -52,7 +54,8 @@
 @property (strong, nonatomic) NSData *ButtonDataRemote;
 @property (strong, nonatomic) NSData *ButtonData;
 @property (strong, nonatomic) NSData *ImuData;
-@property (strong, nonatomic) NSData *BatteryLevel;
+@property (strong, nonatomic) NSData *BatteryLevelSensor;
+@property (strong, nonatomic) NSData *BatteryLevelRemote;
 
 
 @property (nonatomic, strong) NSString   *connected;
@@ -62,7 +65,7 @@
 -(void) read;
 -(void) writeValue:(CBUUID *)serviceUUID characteristicUUID:(CBUUID *)characteristicUUID p:(CBPeripheral *)p data:(NSData *)data;
 
--(BOOL) isConnected;
+-(BOOL) isSensorConnected;
 -(BOOL) isSearching;
 -(void) writeCalibrate:(NSData *)d;
 
@@ -94,6 +97,10 @@
 -(BOOL) UUIDSAreEqual:(NSUUID *)UUID1 UUID2:(NSUUID *)UUID2;
 
 -(void) connectWithPeripheral:(int)index;
+-(void) disconnectSensor;
+-(void) disconnectRemote;
+
+
 
 @end
 

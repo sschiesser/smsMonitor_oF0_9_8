@@ -178,4 +178,12 @@ public:
     int guiFramerate;
     
     
+private:
+    void drawHeader();
+    void drawDeviceList();
+    void drawSensorModules();
+    void drawRemoteModules();
+
+    
+    
 };

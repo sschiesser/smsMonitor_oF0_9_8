@@ -6,7 +6,7 @@
 #define GUI_WINDOW_WIDTH                    560
 #define GUI_WINDOW_HEIGHT                   720
 #define GUI_HEADER_WIDTH                    GUI_WINDOW_WIDTH
-#define GUI_HEADER_HEIGHT                     48
+#define GUI_HEADER_HEIGHT                     64
 
 //#define GUI_MODULE_WIDTH                  (GUI_WINDOW_WIDTH / 4)
 #define GUI_MOD_SENSORS_WIDTH            360

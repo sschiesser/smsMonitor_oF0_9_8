@@ -15,15 +15,20 @@ public:
     void connectWithPeripheral(int index);
     bool getButton(int i);
     bool isConnected();
+    bool isRemoteConnected();
     bool isSearching();
     double getAhrs(int i);
     float getTemperature();
     float getPressure();
-    float getBatteryLevel();
+    float getBatteryLevelSensor();
+    float getBatteryLevelRemote();
     void calibrate();
-    int getLinkStrength();
+    int getLinkStrengthSensor();
+    int getLinkStrengthRemote();
+    void disconnectSensor();
+    void disconnectRemote();
     
-    
+
 private:
     BLEObjectiveC *ble;
     

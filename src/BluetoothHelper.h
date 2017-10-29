@@ -38,9 +38,11 @@ public:
     void searchForDevices(std::vector<bluetoothDevice>* result);
     //void setofxBLE(ofxBLE *myofxBLE1);
     void connectWithDevice(int deviceAtPosition);
-    void disconnect();
+    void disconnectSensor();
+    void disconnectRemote();
     void calibrate();
-    double getBatteryLevel();
+    double getBatteryLevelSensor();
+    double getBatteryLevelRemote();
     bool getButton1DataRemote();
     bool getButton2DataRemote();
     bool getButton1Data();
@@ -54,7 +56,9 @@ public:
     void sethaveahrsDatafalse();
     bool isSearching();
     bool isConnected();
-    float getLinkStrength();
+    bool isRemoteConnected();
+    float getLinkStrengthSensor();
+    float getLinkStrengthRemote();
     bool haveButtonData();
     void getDeviceList(std::vector<bluetoothDevice>* result);
     

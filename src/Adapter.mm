@@ -83,7 +83,11 @@ void Adapter::connectWithPeripheral(int index){
 }
 
 bool Adapter::isConnected(){
-    return ble.isConnected;
+    return ble.isSensorConnected;
+}
+
+bool Adapter::isRemoteConnected(){
+    return ble.isRemoteConnected;
 }
 
 bool Adapter::isSearching(){
@@ -152,9 +156,9 @@ float Adapter::getPressure(){
     
 }
 
-float Adapter::getBatteryLevel(){
-    if(ble.BatteryLevel != nil){
-        const uint8_t *data = (const unsigned char *)[ble.BatteryLevel bytes];
+float Adapter::getBatteryLevelSensor(){
+    if(ble.BatteryLevelSensor != nil){
+        const uint8_t *data = (const unsigned char *)[ble.BatteryLevelSensor bytes];
         return data[0]/100.0;
     }
     else{
@@ -162,6 +166,18 @@ float Adapter::getBatteryLevel(){
     }
     
 }
+
+float Adapter::getBatteryLevelRemote(){
+    if(ble.BatteryLevelRemote != nil){
+        const uint8_t *data = (const unsigned char *)[ble.BatteryLevelRemote bytes];
+        return data[0]/100.0;
+    }
+    else{
+        return 0.0;
+    }
+    
+}
+
 
 void Adapter::calibrate()
 {
@@ -174,7 +190,20 @@ void Adapter::calibrate()
     [ble writeCalibrate:data];
 }
 
-int Adapter::getLinkStrength(){
-    return ble.rssi;
+int Adapter::getLinkStrengthSensor(){
+    return ble.rssiSensor;
 }
+
+int Adapter::getLinkStrengthRemote(){
+    return ble.rssiRemote;
+}
+
+void Adapter::disconnectRemote(){
+    [ble disconnectRemote];
+}
+void Adapter::disconnectSensor(){
+    [ble disconnectSensor];
+}
+
+
 
