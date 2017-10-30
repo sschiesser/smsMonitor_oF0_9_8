@@ -116,8 +116,8 @@ struct bleMpuData
 #define SMSDATA_AHRS_Q3_POS             2
 #define SMSDATA_AHRS_Q4_POS             3
 
-#define SMSDATA_PRESS_CALIB_START           10
-#define SMSDATA_PRESS_CALIB_SAMPLES        100
+#define SMSDATA_PRESS_CALIB_START          250
+#define SMSDATA_PRESS_CALIB_SAMPLES        350
 #define SMSDATA_PRESS_CALIB_STOP            (SMSDATA_PRESS_CALIB_START + SMSDATA_PRESS_CALIB_SAMPLES)
 
 struct smsData

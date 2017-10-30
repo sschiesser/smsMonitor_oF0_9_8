@@ -18,6 +18,9 @@ ofConePrimitive* myCone;
 bool showDeviceList = false;
 vector<bluetoothDevice> *devices;
 bool oscRunning = false;
+bool isSensorConnected = false;
+bool isRemoteConnected = false;
+ofQuaternion rawQuatFromDevice;
 
 
 
@@ -128,7 +131,7 @@ void ofApp::setup() {
     //myCone->setOrientation(ofQuaternion(0.5, 0.7, 0.4, 0.2));
     //myCone->setGlobalOrientation(ofQuaternion(0.7071,0,0.7071,0));
     
-    myCone->setTopColor(ofColor(102, 100, 32));
+    myCone->setTopColor(ofColor::blue);
     myCone->setCapColor(ofColor::yellow);
     
     //starting Bluetooth
@@ -230,13 +233,46 @@ bool doSetTheme = false;
 void ofApp::update() {
     
     
-    if(!myBluetoothHelper->BluetoothHelper::isConnected() && oscRunning){
-        OscSenderThread->stop();
-        oscRunning = false;
-    }
     static double pressureOffset = 0.;
     static double temperatureOffset = 0.;
     static int airmemsCalibCounter = 0;
+
+    if(!isSensorConnected && myBluetoothHelper->BluetoothHelper::isConnected()){
+        
+        //Sensor just connected
+        isSensorConnected = true;
+        airmemsCalibFlag = true;
+        pressureOffset = 0;
+        temperatureOffset = 0;
+        airmemsCalibCounter = 0;
+        OscSenderThread->start();
+        oscRunning = true;
+
+        
+    }
+    if(!myBluetoothHelper->BluetoothHelper::isConnected()){
+        isSensorConnected = false;
+    }
+    
+    if(!isRemoteConnected&&myBluetoothHelper->BluetoothHelper::isRemoteConnected()){
+        
+        //Remote just connected
+        isRemoteConnected = true;
+        OscSenderThread->start();
+        oscRunning = true;
+        
+    }
+    if(!myBluetoothHelper->BluetoothHelper::isRemoteConnected()){
+        isRemoteConnected = false;
+    }
+
+    
+    if(!myBluetoothHelper->BluetoothHelper::isConnected()&& !myBluetoothHelper->BluetoothHelper::isRemoteConnected()){
+        if(oscRunning){
+            OscSenderThread->stop();
+            oscRunning = false;
+        }
+    }
     
     if (doSetTheme)
     {
@@ -276,6 +312,7 @@ void ofApp::update() {
     }
     if (myBluetoothHelper->BluetoothHelper::haveAirmemsData())
     {
+
         //        cout << "airmems data... calibflag? " << airmemsCalibFlag << endl;
         
         if(airmemsCalibFlag) {
@@ -363,7 +400,9 @@ void ofApp::update() {
         //displayQuat.set(dQ[0], dQ[1], -dQ[3], -dQ[2]);
         
         //the right configuration for the pyramid being on the front of the sensor
-        displayQuat.set(-dQ[0], dQ[1], dQ[2], dQ[3]);
+        displayQuat.set(-dQ[0], -dQ[1], -dQ[2], dQ[3]);
+        
+        rawQuatFromDevice = ofQuaternion(dQ[0], dQ[1], -dQ[3], -dQ[2]);
         
 
         //Rotating the the Quaternion such that it is displayed horizontally on the screen
@@ -480,8 +519,10 @@ void ofApp::drawHeader(){
                             //                                    startBleHid();
                             //OscSenderThread->start();
                             //oscSenderRunning = true;
-                            OscSenderThread->start();
-                            oscRunning = true;
+                            if(myBluetoothHelper->BluetoothHelper::isConnected() || myBluetoothHelper->BluetoothHelper::isRemoteConnected()){
+                                OscSenderThread->start();
+                                oscRunning = true;
+                            }
                             //cout << "start OSC" << endl;
                         }
                     }
@@ -711,7 +752,7 @@ void ofApp::drawSensorModules(){
                         
                         
                         
-                        
+                        /*
                         // Q1
                         {
                             ImGui::Text("quat1:"); ImGui::SameLine(56);
@@ -759,6 +800,7 @@ void ofApp::drawSensorModules(){
                             ImGui::Spacing();
                             
                         }
+                         */
                         //pitch
                         {
                             ImGui::Text("pitch:"); ImGui::SameLine(56);
@@ -858,13 +900,13 @@ void ofApp::drawSensorModules(){
                             }
                             ImGui::EndGroup(); ImGui::SameLine(80);
                             string id = "##pressSlider" + ofToString(mod);
-                            ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, -400.0f, 400.0f, ""); ImGui::SameLine(92);
+                            ImGui::VSliderFloat(id.c_str(), ImVec2(12, 80), &press, -300.0f, 300.0f, ""); ImGui::SameLine(92);
                             string idPlot = "##pressPlot" + ofToString(mod);
                             if(airmemsCalibFlag) {
-                                ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "CALIBRATING!", -400.0f, 400.0f, ImVec2(252, 80));
+                                ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "CALIBRATING!", -300.0f, 300.0f, ImVec2(252, 80));
                             }
                             else {
-                                ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", -400.0f, 400.0f, ImVec2(252, 80));
+                                ImGui::PlotLines(idPlot.c_str(), pVals.Data, pVals.Size, 0, "Pressure (mbar)", -300.0f, 300.0f, ImVec2(252, 80));
                             }
                         }
                         ImGui::EndGroup();
@@ -1207,16 +1249,13 @@ void ofApp::draw() {
         //        myBox->rotate(displayQuat);
         //        myBox->draw();
         
-        ofConePrimitive temp;
-        temp.setOrientation(displayQuat);
-        
         //myCone->setOrientation(displayQuat);
         //myCone->draw();
         //        cout << "displayQuat @ "  << displayQuat.x() << " " << displayQuat.y() << "  " <<  displayQuat.z() << " " <<  displayQuat.w() << endl;
         // ofVec3f(EulerAngles);
         
-        EulerAngles = temp.getOrientationEuler();
-        
+        //EulerAngles = rawQuatFromDevice.getOrientationEuler();
+        EulerAngles = rawQuatFromDevice.getEuler();
         EulerX_roll = EulerAngles.x;
         EulerY_yaw = EulerAngles.y;
         EulerZ_pitch = EulerAngles.z;

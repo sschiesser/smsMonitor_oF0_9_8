@@ -3,7 +3,7 @@ In BluetoothHelper::loadDevices check if devices with identifier == null are fou
 Decouple objective C code from ofApp and make ofApp a C++ class again
 make UI beautiful
 Device huge methods in ofApp.cpp up into multiple smaller ones
-
+Systemtime
 
 ************** from Sébastien :-) ******************
 (-buttons)
