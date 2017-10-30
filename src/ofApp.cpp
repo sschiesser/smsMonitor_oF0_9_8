@@ -356,9 +356,6 @@ void ofApp::update() {
          */
         
         
-        
-        
-        
         OscSenderThread->newIMUData = true;
         OscSenderThread->newTemperatureData = true;
         
@@ -448,8 +445,10 @@ void ofApp::drawHeader(){
                 
                 ImGui::BeginGroup();
                 
-                if (ImGui::Button("Calibrate")) {
-                    myBluetoothHelper->BluetoothHelper::calibrate();
+                if(myBluetoothHelper->BluetoothHelper::isConnected()){
+                    if (ImGui::Button("Calibrate")) {
+                        myBluetoothHelper->BluetoothHelper::calibrate();
+                    }
                 }
                 /*
                  if (ImGui::Button("Test")) {
@@ -1140,7 +1139,7 @@ void ofApp::drawRemoteModules(){
                 ImGui::Text("Battery:");
                 //float battery = (rand() % 100) / 100.;
                 float battery = 0;
-                if(myBluetoothHelper->BluetoothHelper::isConnected()) {
+                if(myBluetoothHelper->BluetoothHelper::isRemoteConnected()) {
                     battery = myBluetoothHelper->BluetoothHelper::getBatteryLevelRemote();
                 }
                 ImGui::PushItemWidth(140);

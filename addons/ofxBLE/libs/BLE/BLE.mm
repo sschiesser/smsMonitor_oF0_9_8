@@ -704,7 +704,7 @@ int checkNumberOFDevice;
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
 {
     
-    [self readRSSI];
+    //[self readRSSI];
     if([peripheral.name isEqualToString:@"SMS_sensors"]){
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) {
             //        NSLog(@"button received");
@@ -729,11 +729,12 @@ int checkNumberOFDevice;
     }
     else if([peripheral.name isEqualToString:@"SMS_remote"]){
         if ([characteristic.UUID isEqual:[CBUUID UUIDWithString:@RBL_CHAR_BUTTON_UUID]]) {
-            NSLog(@"received a button change remote");
             ButtonDataRemote = [characteristic value];
         }
         else if([characteristic.UUID isEqual:[CBUUID UUIDWithString:@BATTERY_LEVEL_CHARACTERISTIC_UUID]]){
             BatteryLevelRemote = [characteristic value];
+            NSLog(@"battery change");
+
         }
 
 
@@ -757,5 +758,15 @@ int checkNumberOFDevice;
     }
 
 }
+
+-(void)refreshRemoteRSSI{
+    [activePeripheralRemote readRSSI];
+}
+
+-(void)refreshRSSI{
+    [activePeripheral readRSSI];
+}
+
+
 
 @end

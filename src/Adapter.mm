@@ -159,9 +159,11 @@ float Adapter::getPressure(){
 float Adapter::getBatteryLevelSensor(){
     if(ble.BatteryLevelSensor != nil){
         const uint8_t *data = (const unsigned char *)[ble.BatteryLevelSensor bytes];
+        [ble refreshRSSI];
         return data[0]/100.0;
     }
     else{
+        [ble refreshRSSI];
         return 0.0;
     }
     
@@ -170,9 +172,11 @@ float Adapter::getBatteryLevelSensor(){
 float Adapter::getBatteryLevelRemote(){
     if(ble.BatteryLevelRemote != nil){
         const uint8_t *data = (const unsigned char *)[ble.BatteryLevelRemote bytes];
+        [ble refreshRemoteRSSI];
         return data[0]/100.0;
     }
     else{
+        [ble refreshRemoteRSSI];
         return 0.0;
     }
     

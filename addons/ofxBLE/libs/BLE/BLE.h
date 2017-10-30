@@ -99,6 +99,8 @@
 -(void) connectWithPeripheral:(int)index;
 -(void) disconnectSensor;
 -(void) disconnectRemote;
+-(void)refreshRemoteRSSI;
+-(void)refreshRSSI;
 
 
 
