@@ -55,9 +55,9 @@ void BluetoothHelper::getDeviceList(std::vector<bluetoothDevice>* result){
                 case CBPeripheralStateDisconnected:
                     mD.status = PERIPHERAL_STATE_DISCONNECTED;
                     break;
-                case CBPeripheralStateDisconnecting:
-                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
-                    break;
+//                case CBPeripheralStateDisconnecting:
+//                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
+//                    break;
                     
                 default:
                     break;
@@ -107,9 +107,9 @@ void BluetoothHelper::loadDevices(std::vector<bluetoothDevice>* result){
                 case CBPeripheralStateDisconnected:
                     mD.status = PERIPHERAL_STATE_DISCONNECTED;
                     break;
-                case CBPeripheralStateDisconnecting:
-                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
-                    break;
+//                case CBPeripheralStateDisconnecting:
+//                    mD.status = PERIPHERAL_STATE_DISCONNECTING;
+//                    break;
 
                 default:
                     break;
