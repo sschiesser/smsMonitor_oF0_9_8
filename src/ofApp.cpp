@@ -393,10 +393,11 @@ void ofApp::update() {
             dQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
             oldQ[i] = newQ[i];
         }
-        /*
-         for (int i = 0 ; i < 3 ; i++){
-         OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
-         }*/
+
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
+         }
         
         // ahrs to pitch roll yaw
         /*

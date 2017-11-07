@@ -135,11 +135,6 @@ void threadedOscSender::threadedFunction()
                 newButtonDataRemote = false;
             }
             
-            if(newButtonDataRemote)
-            {
-                
-            }
-            
             //send airPressure
             if (newAirpressureData){
                 
@@ -165,7 +160,6 @@ void threadedOscSender::threadedFunction()
                 m[3].addFloatArg(sendData[0].quat[1]);
                 m[3].addFloatArg(sendData[0].quat[2]);
                 m[3].addFloatArg(sendData[0].quat[3]);
-                
                 oscSender[0].sendMessage( m[3] );
                 
                 
@@ -199,7 +193,7 @@ void threadedOscSender::threadedFunction()
                 
             }
             
-            if ( newButtonDataSensors == false && newAirpressureData == false && newTemperatureData == false && newTemperatureData == false)
+            if ( newButtonDataSensors == false && newAirpressureData == false && newTemperatureData == false && newTemperatureData == false && newButtonDataRemote == false)
             {
                 sleep(2);
             }
