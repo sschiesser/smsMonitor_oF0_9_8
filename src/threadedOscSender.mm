@@ -46,6 +46,7 @@ void threadedOscSender::setup()
     }
     // set OSC-Adresses:
     SMS_sensors_button_address = "/sabre/SMS_sensors/buttons";
+    SMS_remote_button_address = "/sabre/SMS_remote/buttons";
    // SMS_sensors_button_address[1] = "/sabre/SMS_sensors/buttons/button2";
     
     SMS_sensors_airmems_pressure_address = "/sabre/SMS_sensors/airpressure";
@@ -113,21 +114,29 @@ void threadedOscSender::threadedFunction()
         for(int i = 0; i < SMS_MAX_PERIPH; i++) {
             //send Button
             
-            if (newButtonData){
+            if (newButtonDataSensors){
                 
                 m[0].clear();
                 m[0].setAddress(SMS_sensors_button_address);
                 m[0].addIntArg(sendData[0].button[SMSDATA_BUTTON_B0_POS]);
                 m[0].addIntArg(sendData[0].button[SMSDATA_BUTTON_B1_POS]);
                 oscSender[0].sendMessage( m[0] );
-                
-               /* m[1].clear();
-                m[1].setAddress(SMS_sensors_button_address[1]);
+                NSLog(@"sensor buttons sent over OSC");
+                newButtonDataSensors = false;
+            }
+            
+            if(newButtonDataRemote) {
+               m[1].clear();
+                m[1].setAddress(SMS_remote_button_address);
+                m[1].addIntArg(sendData[0].button[SMSDATA_BUTTON_B0_POS]);
                 m[1].addIntArg(sendData[0].button[SMSDATA_BUTTON_B1_POS]);
                 oscSender[0].sendMessage( m[1] );
-                */
-//                 NSLog(@"button sent over OSC");
-                newButtonData = false;
+                NSLog(@"remote buttons sent over OSC");
+                newButtonDataRemote = false;
+            }
+            
+            if(newButtonDataRemote)
+            {
                 
             }
             
@@ -190,7 +199,7 @@ void threadedOscSender::threadedFunction()
                 
             }
             
-            if ( newButtonData == false && newAirpressureData == false && newTemperatureData == false && newTemperatureData == false)
+            if ( newButtonDataSensors == false && newAirpressureData == false && newTemperatureData == false && newTemperatureData == false)
             {
                 sleep(2);
             }

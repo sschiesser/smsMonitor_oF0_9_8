@@ -57,12 +57,14 @@ public:
     
     ofxOscMessage m[OSC_FRAMELENGTH];
     
-    bool newButtonData;
+    bool newButtonDataSensors;
     bool newAirpressureData;
     bool newIMUData;
     bool newTemperatureData;
+    bool newButtonDataRemote;
     
     string SMS_sensors_button_address;
+    string SMS_remote_button_address;
     
     string SMS_sensors_airmems_pressure_address;
     
