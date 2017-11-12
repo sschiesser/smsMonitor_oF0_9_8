@@ -21,6 +21,7 @@ bool oscRunning = false;
 bool isSensorConnected = false;
 bool isRemoteConnected = false;
 ofQuaternion rawQuatFromDevice;
+double virtualNorth = 0;
 
 
 
@@ -302,6 +303,9 @@ void ofApp::update() {
      myBluetoothHelper->BluetoothHelper::restart = false;
      }
      */
+    
+    
+    
     if (myBluetoothHelper->BluetoothHelper::haveButtonData())
     {
         OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::getButton1Data();
@@ -368,10 +372,10 @@ void ofApp::update() {
             dQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
             oldQ[i] = newQ[i];
         }
-        /*
+        
          for (int i = 0 ; i < 3 ; i++){
          OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
-         }*/
+         }
         
         // ahrs to pitch roll yaw
         /*
@@ -402,18 +406,31 @@ void ofApp::update() {
         //the right configuration for the pyramid being on the front of the sensor
         displayQuat.set(-dQ[0], -dQ[1], -dQ[2], dQ[3]);
         
-        rawQuatFromDevice = ofQuaternion(dQ[0], dQ[1], -dQ[3], -dQ[2]);
-        
 
         //Rotating the the Quaternion such that it is displayed horizontally on the screen
         ofVec3f v1 = ofVec3f(180, 180,0);
         ofVec3f v2 = ofVec3f(-90,180,0);
         ofQuaternion correction = ofQuaternion();
         correction.makeRotate(v1, v2);
-        ofVec3f newImaginaryPart = correction.operator*(ofVec3f(dQ[1],dQ[2],dQ[3]));
+        //ofVec3f newImaginaryPart = correction.operator*(ofVec3f(dQ[1],dQ[2],dQ[3]));
         displayQuat.set(displayQuat.operator*=(correction));
         
+        /*
+        NSLog([NSString stringWithFormat:@"%f, %f, %f", displayQuat.getEuler().x, displayQuat.getEuler().y, displayQuat.getEuler().z]);
+        
+        ofQuaternion temp = ofQuaternion(displayQuat.x(), displayQuat.y(), displayQuat.y(), displayQuat.z());
+        displayQuat.slerp(1, displayQuat, displayQuat);
+        correction = ofQuaternion();
+        correction.makeRotate(v1, v2);
+        displayQuat.set(displayQuat.operator*=(correction));
 
+*/
+        
+        rawQuatFromDevice = ofQuaternion(dQ[0], -dQ[1], -dQ[3], dQ[2]);
+        ofQuaternion rot = ofQuaternion(0, 0, 1, 0);
+        rawQuatFromDevice = rawQuatFromDevice.operator*=(rot);
+
+        
         
         /*
          Facts about Quaternions:
@@ -421,7 +438,7 @@ void ofApp::update() {
          Assumption: (w,x,y,z) is the quaternion rotating from coordinate frame C1 to coordinate frame C2:
          
          Exchange x and y axis: exchange the two axes and negate the real part => (-w,y,x,z)
-         Mirror a the x axis: negate the two other axis: => (w,x,-y,-z)
+         Mirror the x axis: negate the two other axis: => (w,x,-y,-z)
          
          Good link:
          https://stackoverflow.com/questions/32438252/efficient-way-to-apply-mirror-effect-on-quaternion-rotation
@@ -488,6 +505,13 @@ void ofApp::drawHeader(){
                     if (ImGui::Button("Calibrate")) {
                         myBluetoothHelper->BluetoothHelper::calibrate();
                     }
+                    
+                    ImGui::SameLine(ImGui::GetWindowWidth()-280);
+
+                    if (ImGui::Button("Set Virtual North")) {
+                        virtualNorth = rawQuatFromDevice.getEuler().y;
+                    }
+
                 }
                 /*
                  if (ImGui::Button("Test")) {
@@ -502,6 +526,11 @@ void ofApp::drawHeader(){
                     // OSC
                     if (oscRunning) {
                         // if BLE running... STOP
+                        /*
+                        if(ImGui::Button("Stop OSC")){
+                            OscSenderThread->stop();
+                            oscRunning = false;
+                        }*/
                         if(ImGui::ImageButton((ImTextureID)(uintptr_t)stopOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
                             //OscSenderThread->stop();
                             //oscSenderRunning = false;
@@ -514,6 +543,15 @@ void ofApp::drawHeader(){
                     }
                     else {
                         // if BLE NOT running... START
+                        /*
+                        if(ImGui::Button("Start OSC")){
+                            if(myBluetoothHelper->BluetoothHelper::isConnected() || myBluetoothHelper->BluetoothHelper::isRemoteConnected()){
+                                OscSenderThread->start();
+                                oscRunning = true;
+                            }
+
+                        }*/
+
                         if(ImGui::ImageButton((ImTextureID)(uintptr_t)startOSCButtonID, ImVec2(72, 16), ImVec2(0,0), ImVec2(1,1), 0)) {
                             //myBluetoothHelper->BluetoothHelper::restart = true;
                             //                                    startBleHid();

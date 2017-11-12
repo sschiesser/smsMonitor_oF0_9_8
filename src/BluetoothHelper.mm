@@ -220,7 +220,7 @@ float BluetoothHelper::getLinkStrengthRemote(){
 
 
 bool BluetoothHelper::haveButtonData(){
-    return false;
+    return true;
 }
 
 
