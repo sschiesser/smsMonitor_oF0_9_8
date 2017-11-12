@@ -304,20 +304,42 @@ void ofApp::update() {
      }
      */
     
-    
-    
-    if (myBluetoothHelper->BluetoothHelper::haveButtonData())
+    ////////////////////////////////////////////////////////
+    // SEBASTIEN BUTTON CHANGES TO UPDATE OSC STREAM !!
+    ////////////////////////////////////////////////////////
+    if((myBluetoothHelper->BluetoothHelper::getButton1Data() != myBluetoothHelper->BluetoothHelper::curButton1Data) ||
+       (myBluetoothHelper->BluetoothHelper::getButton2Data() != myBluetoothHelper->BluetoothHelper::curButton2Data))
     {
-        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::getButton1Data();
-        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = myBluetoothHelper->BluetoothHelper::getButton2Data();
-        OscSenderThread->newButtonData = true;
-        
-        //myBluetoothHelper->BluetoothHelper::sethaveButtonDatafalse();
+        myBluetoothHelper->BluetoothHelper::curButton1Data = myBluetoothHelper->BluetoothHelper::getButton1Data();
+        myBluetoothHelper->BluetoothHelper::curButton2Data = myBluetoothHelper->BluetoothHelper::getButton2Data();
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::curButton1Data;
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = myBluetoothHelper->BluetoothHelper::curButton2Data;
+        OscSenderThread->newButtonDataSensors = true;
+//        cout << "Button sensors" << endl;
     }
+    if((myBluetoothHelper->BluetoothHelper::getButton1DataRemote() != myBluetoothHelper->BluetoothHelper::curButton1DataRemote) ||
+       (myBluetoothHelper->BluetoothHelper::getButton2DataRemote() != myBluetoothHelper->BluetoothHelper::curButton2DataRemote))
+    {
+        myBluetoothHelper->BluetoothHelper::curButton1DataRemote = myBluetoothHelper->BluetoothHelper::getButton1DataRemote();
+        myBluetoothHelper->BluetoothHelper::curButton2DataRemote = myBluetoothHelper->BluetoothHelper::getButton2DataRemote();
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::curButton1DataRemote;
+        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = myBluetoothHelper->BluetoothHelper::curButton2DataRemote;
+        OscSenderThread->newButtonDataRemote = true;
+    }
+
+//    if (myBluetoothHelper->BluetoothHelper::haveButtonData())
+//    {
+//        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B0_POS] = myBluetoothHelper->BluetoothHelper::getButton1Data();
+//        OscSenderThread->sendData[0].button[SMSDATA_BUTTON_B1_POS] = myBluetoothHelper->BluetoothHelper::getButton2Data();
+//        OscSenderThread->newButtonData = true;
+//        cout << "Button data: " << endl;
+//        
+//        //myBluetoothHelper->BluetoothHelper::sethaveButtonDatafalse();
+//    }
     if (myBluetoothHelper->BluetoothHelper::haveAirmemsData())
     {
 
-        //        cout << "airmems data... calibflag? " << airmemsCalibFlag << endl;
+//        NSLog(@"airmems data... calibflag? %d", airmemsCalibFlag);
         
         if(airmemsCalibFlag) {
             if(airmemsCalibCounter < SMSDATA_PRESS_CALIB_START) {
@@ -332,7 +354,7 @@ void ofApp::update() {
                     pressureOffset = pressureOffset / SMSDATA_PRESS_CALIB_SAMPLES;
                     temperatureOffset = temperatureOffset / SMSDATA_PRESS_CALIB_SAMPLES;
                     airmemsCalibFlag = false;
-                    cout << "pressure offset: " << pressureOffset << ", temp offset: " << temperatureOffset << endl;
+//                    cout << "pressure offset: " << pressureOffset << ", temp offset: " << temperatureOffset << endl;
                 }
             }
             airmemsCalibCounter++;
@@ -360,7 +382,7 @@ void ofApp::update() {
         long curIMU = ofGetElapsedTimeMillis();
         long deltaIMU = curIMU - oldIMU;
         oldIMU = curIMU;
-        //        cout << "deltaIMU: " << deltaIMU << endl;
+//        NSLog(@"deltaIMU: %d", deltaIMU);
         OscSenderThread->sendData[0].delta[SMSDATA_DELTA_GYRO_POS] = deltaIMU;
         
         static double oldQ[4];
@@ -372,9 +394,10 @@ void ofApp::update() {
             dQ[i] = (newQ[i] * QUAT_LP_FACTOR) + (oldQ[i] * (1 - QUAT_LP_FACTOR));
             oldQ[i] = newQ[i];
         }
-        
-         for (int i = 0 ; i < 3 ; i++){
-         OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
+
+        for (int i = 0 ; i < 3 ; i++)
+        {
+            OscSenderThread->sendData[0].euler[i] = EulerPRY[i];
          }
         
         // ahrs to pitch roll yaw
